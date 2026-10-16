@@ -1,7 +1,6 @@
 """Explicit local demo initialization, never run automatically in production."""
 import os
 import secrets
-from pathlib import Path
 from sqlalchemy import select, insert
 from . import db
 from .domain import uid, now, FIELDS
@@ -39,13 +38,15 @@ def seed(engine, password=None):
                           source='演示期初批次',note='仅供本地开发与验证，无真实仓库数据',actor_id='admin',created_at=timestamp,status='completed'))
                 c.execute(insert(db.ledger).values(id=uid(),tenant_id=tenant,owner_id=tenant,warehouse_id=wh,sku_id=sid,document_id=document_id,
                           kind='initial',delta={'g':count,'q':0,'d':0},before=dict.fromkeys(FIELDS,0),after=values,actor_id='admin',created_at=timestamp))
+        from .catalog import backfill_existing
+        backfill_existing(c)
         return credentials
 
 if __name__=='__main__':
     engine=db.make_engine();credentials=seed(engine)
     if credentials:
-        path=Path('.local/login.txt');path.parent.mkdir(exist_ok=True)
+        path=engine.runtime_settings.data_dir/'login.txt';path.parent.mkdir(parents=True,exist_ok=True)
         fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_TRUNC,0o600)
         with os.fdopen(fd,'w') as f:f.write('本地演示登录信息，请勿提交版本库或部署到公网。\n\n'+'\n'.join(credentials)+'\n')
-        print('演示数据已初始化；随机登录密码保存在 .local/login.txt')
+        print(f'演示数据已初始化；随机登录密码保存在 {path}')
     else:print('演示商户已存在，保留当前数据与密码。')

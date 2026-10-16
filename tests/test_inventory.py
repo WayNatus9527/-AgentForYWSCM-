@@ -13,7 +13,11 @@ from app.main import create_app
 from app.security import hash_password
 
 @pytest.fixture
-def env(tmp_path):
+def env(tmp_path, monkeypatch):
+    # Exercise v0.4.1 contracts in the explicit migration-compatibility profile.
+    # Default deployments reject new voucherless receipts/sales; M1 verifies that.
+    monkeypatch.setenv('APP_ALLOW_LEGACY_RECEIPTS', 'true')
+    monkeypatch.setenv('APP_ALLOW_LEGACY_SALES', 'true')
     url_file=os.environ.get('TEST_DATABASE_URL_FILE')
     control=None;schema=None
     if url_file:

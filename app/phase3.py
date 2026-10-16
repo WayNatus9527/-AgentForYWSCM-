@@ -153,8 +153,8 @@ def install(app,engine,actor_for,scope):
         def apply(c):
             if c.scalar(select(func.count()).select_from(db.tenants))!=1:w.fail('SINGLE_TENANT_ONLY','此本地维护工具仅适用于单商户数据库')
             # SQLite online backup reads the committed snapshot; this command has not changed business data.
-            report=snapshot(engine.url.database,Path('.local/backups'))
-            drill=restore(Path('.local/backups')/report['file'],Path('.local/recovery')/(uuid4().hex+'.db'))
+            report=snapshot(engine.url.database,(engine.runtime_settings.data_dir/'backups'))
+            drill=restore((engine.runtime_settings.data_dir/'backups')/report['file'],(engine.runtime_settings.data_dir/'recovery')/(uuid4().hex+'.db'))
             c.execute(insert_audit(actor,report,drill))
             return {'backup':{'file':report['file'],'sha256':report['sha256']},'restore':drill}
         return w.command(engine,actor,'maintenance.backup',{},idempotency_key,apply)

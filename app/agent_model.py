@@ -1,7 +1,6 @@
 """DeepSeek V4.1 Flash: one bounded, read-only tool-selection request."""
 import json
 import os
-from pathlib import Path
 from urllib import request, error
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from typing import Literal
@@ -27,11 +26,12 @@ sku_text提取用户原文里的商品名称、SKU编码或条码片段，wareho
 需要历史趋势/指定历史时点、比较多种商品/多个仓库、任意自定义阈值/日期条件，或指代不清的问题用clarify；本阶段只查当前状态。
 每个问题独立，不假设存在前文。不能将“它/那个”猜成全部商品。'''
 
-def api_key():
+def api_key(*, settings=None):
     value = os.getenv('DEEPSEEK_API_KEY', '').strip()
     if value:
         return value
-    path = Path('.local/deepseek-api-key')
+    from .config import load_settings
+    path = (settings or load_settings()).model_key_path
     if not path.exists():
         return ''
     if path.is_symlink() or path.stat().st_mode & 0o077:
@@ -44,9 +44,9 @@ def api_key():
         raise BusinessError('MODEL_KEY_INVALID', 'DeepSeek密钥文件格式无效', 503)
     return value
 
-def status():
+def status(*, settings=None):
     try:
-        ready = bool(api_key())
+        ready = bool(api_key(settings=settings))
         return {'provider':'DeepSeek', 'model':MODEL, 'model_label':'DeepSeek V4.1 Flash',
                 'configured':ready, 'message':'已配置，真实连通性以查询结果为准' if ready else '尚未配置模型密钥；可使用下方本地查询按钮'}
     except BusinessError as exc:
@@ -56,11 +56,11 @@ class NoRedirect(request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
 
-def select_plan(question, selection):
-    return tool_plan(question,selection,QueryPlan,PROMPT,'plan_inventory_query')
+def select_plan(question, selection, *, settings=None):
+    return tool_plan(question,selection,QueryPlan,PROMPT,'plan_inventory_query',settings=settings)
 
-def tool_plan(question, selection, schema, prompt, name):
-    key = api_key()
+def tool_plan(question, selection, schema, prompt, name, *, settings=None):
+    key = api_key(settings=settings)
     if not key:
         raise BusinessError('MODEL_NOT_CONFIGURED', '尚未配置DeepSeek密钥，请先使用本地查询或由管理员配置服务端密钥', 503)
     payload = {'model':MODEL,'thinking':{'type':'disabled'},'temperature':0,'max_tokens':768,'stream':False,

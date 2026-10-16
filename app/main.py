@@ -69,7 +69,7 @@ def create_app(engine=None):
         from .migrations import migrate
         migrate(engine)
         yield
-    app = FastAPI(title='义乌商贸库存管家',version='0.4.1',lifespan=lifespan)
+    app = FastAPI(title='跨境电商供应链管理Agent助手',version='0.5.0',lifespan=lifespan)
     app.state.engine = engine
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=['127.0.0.1','localhost','testserver'])
     attempts = defaultdict(deque)
@@ -97,7 +97,18 @@ def create_app(engine=None):
             expected = str(request.base_url).rstrip('/')
             if origin and origin != expected:
                 return JSONResponse({'error':{'code':'ORIGIN_REJECTED','message':'请求来源不允许'}},status_code=403)
-        response = await call_next(request)
+        from .events import request_context
+        request_id = uid()
+        token = request_context.set(request_id)
+        try:
+            response = await call_next(request)
+        finally:
+            request_context.reset(token)
+        response.headers['X-Request-ID'] = request_id
+        if request.url.path in ('/api/v1/receipts/confirm', '/api/v1/sales/confirm'):
+            response.headers['Deprecation'] = 'true'
+            successor = 'receipts' if request.url.path == '/api/v1/receipts/confirm' else 'sales'
+            response.headers['Link'] = f'</api/v2/inventory/{successor}>; rel="successor-version"'
         response.headers['X-Content-Type-Options']='nosniff'
         response.headers['X-Frame-Options']='DENY'
         response.headers['Referrer-Policy']='same-origin'
@@ -175,8 +186,17 @@ def create_app(engine=None):
             if warehouse_id:
                 get_warehouse(c,actor,warehouse_id)
                 query=query.where(db.balances.c.warehouse_id==warehouse_id)
-            return [{**dict(r),'available':available(r),'unallocated':unallocated(r),
-                     'offline_available':min(max(0,available(r)),r['offline']+max(0,unallocated(r)))} for r in c.execute(query).mappings()]
+            from .catalog import assortments, sku_settings
+            knowledge={(r['warehouse_id'],r['sku_id']):dict(r) for r in c.execute(select(assortments).where(assortments.c.tenant_id==actor['tenant_id'])).mappings()}
+            sku_active={r['sku_id']:bool(r['active']) for r in c.execute(select(sku_settings).where(sku_settings.c.tenant_id==actor['tenant_id'])).mappings()}
+            result=[]
+            for r in c.execute(query).mappings():
+                known=knowledge.get((r['warehouse_id'],r['sku_id']),{})
+                result.append({**dict(r),'available':available(r),'unallocated':unallocated(r),
+                     'inventory_known':bool(known.get('inventory_known')),
+                     'eligible_for_replenishment':bool(known.get('active') and known.get('inventory_known') and known.get('replenishment') and sku_active.get(r['sku_id'],True)),
+                     'offline_available':min(max(0,available(r)),r['offline']+max(0,unallocated(r)))})
+            return result
     @app.get('/api/v1/ledger')
     def history(request:Request,warehouse_id:str|None=None,limit:int=100,offset:int=0):
         actor,_=actor_for(request)
@@ -192,11 +212,11 @@ def create_app(engine=None):
         actor,_=actor_for(request)
         with engine.connect() as c:return [dict(x) for x in c.execute(scope(actor,db.documents).order_by(db.documents.c.created_at.desc()).limit(100)).mappings()]
 
-    @app.post('/api/v1/receipts/confirm')
+    @app.post('/api/v1/receipts/confirm', deprecated=True)
     def receive(body:Receipt,request:Request,idempotency_key:Annotated[str,Header(min_length=8,max_length=120)]):
         actor,_=actor_for(request,True)
         return stock_action(engine,actor,'receipt',body.model_dump(),idempotency_key)
-    @app.post('/api/v1/sales/confirm')
+    @app.post('/api/v1/sales/confirm', deprecated=True)
     def sell(body:Sale,request:Request,idempotency_key:Annotated[str,Header(min_length=8,max_length=120)]):
         actor,_=actor_for(request,True)
         return stock_action(engine,actor,'sale',body.model_dump(),idempotency_key)
@@ -227,7 +247,7 @@ def create_app(engine=None):
             writer.writerow([safe(x) for x in [p['code'],p['name'],p['spec'],whs[r['warehouse_id']]['name'],r['g'],r['q'],r['d'],r['r'],r['t'],r['h'],r['b'],r['available'],r['offline_available'],r['updated_at']]])
         return Response('\ufeff'+out.getvalue(),media_type='text/csv; charset=utf-8',headers={'Content-Disposition':'attachment; filename="inventory.csv"'})
     @app.get('/health')
-    def health():return {'status':'ok','version':'0.4.1','environment':'local-development'}
+    def health():return {'status':'ok','version':'0.5.0','environment':'simulation-development','stage':'M1'}
     from .phase2 import install
     install(app,engine,actor_for,scope)
     from .phase3 import install as install_phase3
@@ -235,6 +255,10 @@ def create_app(engine=None):
     from .phase4 import install as install_phase4, install_actions
     install_phase4(app,engine,actor_for)
     install_actions(app,engine,actor_for)
+    from .catalog import install as install_catalog
+    install_catalog(app,engine,actor_for)
+    from .v2 import install as install_v2
+    install_v2(app,engine,actor_for)
     static=Path(__file__).parent/'static'
     app.mount('/static',StaticFiles(directory=static),name='static')
     @app.get('/')

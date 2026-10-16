@@ -43,7 +43,8 @@ def main():
         source=db.make_engine(url.render_as_string(hide_password=False),{'options':'-csearch_path='+schema})
         seed(source,password=secrets.token_urlsafe(24))
         with source.connect() as c:actor=dict(c.execute(select(db.users).where(db.users.c.id=='admin')).mappings().one())
-        stock_action(source,actor,'receipt',{'warehouse_id':'wh-cn','sku_id':'sku-1','g':7,'q':2,'d':1,'source':'restore-drill','expected_version':1},'restore-drill-receipt')
+        from app.inventory import receive
+        receive(source,actor,{'warehouse_id':'wh-cn','sku_id':'sku-1','g':7,'q':2,'d':1,'source':'restore-drill','expected_version':1,'source_account':'restore-drill','reference':'DEL-01','note':'','occurred_at':None},'restore-drill-receipt')
         before=digest(source)
         folder=Path('.local/backups');folder.mkdir(parents=True,exist_ok=True);archive=folder/('postgres-'+suffix+'.dump')
         env=os.environ.copy();env.pop('PGOPTIONS',None)
@@ -56,6 +57,10 @@ def main():
         with db.write(target) as c:c.execute(delete(db.sessions))
         after=digest(target)
         assert before==after,'Restored row content differs'
+        # Only this newly created, fully compared restore target may be rebound.
+        # Plain copies of an existing runtime continue to fail startup checks.
+        from app.events import runtime_bindings
+        with db.write(target) as c:c.execute(delete(runtime_bindings))
         from app.migrations import migrate
         migrate(target)
         with target.connect() as c:

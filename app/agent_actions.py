@@ -166,7 +166,7 @@ def model_input(engine,actor,question):
     from . import agent_model, agent_queries
     from pydantic import ValidationError
     require_role(actor,'admin','warehouse')
-    plan=agent_model.tool_plan(question,{},DraftPlan,DRAFT_PROMPT,'plan_business_draft')
+    plan=agent_model.tool_plan(question,{},DraftPlan,DRAFT_PROMPT,'plan_business_draft',settings=engine.runtime_settings)
     if plan.action in ('clarify','unsupported'):
         w.fail('DRAFT_NEEDS_CLARIFICATION','请明确单个商品、仓库、整数数量及原因；本入口仅生成调拨/采购/良品调整草稿，不执行或审批库存操作',422)
     with engine.connect() as c:

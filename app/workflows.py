@@ -18,11 +18,13 @@ CSV_FIELDS = {'skus':['code','name','spec','unit','barcode'], 'warehouses':['cod
 
 def fail(code,message,status=409):raise BusinessError(code,message,status)
 
-def command(engine,actor,kind,body,key,action):
+def command(engine,actor,kind,body,key,action,*,authorize=None):
     digest=hashlib.sha256(json.dumps({'kind':kind,'body':body},sort_keys=True,ensure_ascii=False).encode()).hexdigest()
     with db.write(engine,actor['tenant_id']) as c:
         from .accounts import assert_current
         assert_current(c,actor)
+        if authorize is not None:
+            authorize(c)
         old=c.execute(select(db.requests).where(db.requests.c.tenant_id==actor['tenant_id'],db.requests.c.actor_id==actor['id'],db.requests.c.key==key)).mappings().first()
         if old:
             if old['fingerprint']!=digest:fail('IDEMPOTENCY_CONFLICT','请求编号已用于其他内容')
@@ -40,31 +42,9 @@ def catalog_create(engine,actor,kind,body,key):
         return row
     return command(engine,actor,'catalog:'+kind,body,key,apply)
 
-def balance(c,actor,warehouse_id,sku_id):
-    get_warehouse(c,actor,warehouse_id,True);get_sku(c,actor,sku_id)
-    row=c.execute(select(db.balances).where(db.balances.c.tenant_id==actor['tenant_id'],db.balances.c.owner_id==actor['tenant_id'],db.balances.c.warehouse_id==warehouse_id,db.balances.c.sku_id==sku_id)).mappings().first()
-    return dict(row) if row else dict(id=uid(),tenant_id=actor['tenant_id'],owner_id=actor['tenant_id'],warehouse_id=warehouse_id,sku_id=sku_id,version=0,updated_at=now(),**dict.fromkeys(FIELDS,0))
-
-def valid_balance(row):
-    if any(row[f]<0 for f in FIELDS):fail('INSUFFICIENT_STOCK','操作会使库存或占用数量小于零')
-    if available(row)<0 or unallocated(row)<0:fail('COMMITMENT_CONFLICT','良品不足以覆盖订单、调拨、冻结、安全量和已分配额度')
-
-def movement(c,actor,row,delta,kind,source,note,expected):
-    if row['version']!=expected:fail('VERSION_CONFLICT','库存已变化，请刷新后重新申请或确认')
-    before={f:row[f] for f in FIELDS}
-    for f in FIELDS:row[f]+=delta.get(f,0)
-    valid_balance(row)
-    from .operations import protect_pending_quality
-    protect_pending_quality(c,actor,row)
-    timestamp=now();row['version']+=1;row['updated_at']=timestamp
-    if c.execute(select(db.balances.c.id).where(db.balances.c.id==row['id'])).first():
-        c.execute(update(db.balances).where(db.balances.c.id==row['id']).values(**row))
-    else:c.execute(insert(db.balances).values(**row))
-    doc_id=kind.upper()[:4]+'-'+uid()[:18]
-    c.execute(insert(db.documents).values(id=doc_id,tenant_id=actor['tenant_id'],kind=kind,warehouse_id=row['warehouse_id'],sku_id=row['sku_id'],quantity=sum(delta.get(f,0) for f in ('g','q','d')),source=source,note=note,actor_id=actor['id'],created_at=timestamp,status='completed'))
-    c.execute(insert(db.ledger).values(id=uid(),tenant_id=actor['tenant_id'],owner_id=actor['tenant_id'],warehouse_id=row['warehouse_id'],sku_id=row['sku_id'],document_id=doc_id,kind=kind,delta={f:row[f]-before[f] for f in FIELDS},before=before,after={f:row[f] for f in FIELDS},actor_id=actor['id'],created_at=timestamp))
-    c.execute(insert(db.outbox).values(id=uid(),tenant_id=actor['tenant_id'],document_id=doc_id,event_type='inventory.changed',payload={'warehouse_id':row['warehouse_id'],'sku_id':row['sku_id'],'version':row['version']},status='not_connected',created_at=timestamp))
-    return doc_id
+# Kept as public aliases while purchasing, transfers and quality migrate into
+# their own modules. All physical/commitment writes share the same boundary.
+from .inventory import load_balance as balance, validate_balance as valid_balance, movement
 
 def opening_row(c,actor,row):
     wh=c.execute(select(db.warehouses).where(db.warehouses.c.tenant_id==actor['tenant_id'],db.warehouses.c.code==row['warehouse_code'])).mappings().first()

@@ -32,7 +32,7 @@ def install(app,engine,actor_for):
     @app.get('/api/v1/agent/status')
     def status(request:Request):
         actor,_=actor_for(request);require_role(actor,'admin','warehouse','cashier')
-        return {**agent_model.status(),'read_only':True,'draft_actions':['transfer','purchase','adjustment'] if actor['role'] in ('admin','warehouse') else [],'max_question_length':1000,'model_requests_per_minute':10}
+        return {**agent_model.status(settings=engine.runtime_settings),'read_only':True,'draft_actions':['transfer','purchase','adjustment'] if actor['role'] in ('admin','warehouse') else [],'max_question_length':1000,'model_requests_per_minute':10}
 
     @app.post('/api/v1/agent/ask')
     def ask(body:Ask,request:Request):
@@ -51,7 +51,7 @@ def install(app,engine,actor_for):
             running.add(user)
         request_id=str(uuid4());started=time.monotonic();outcome='error'
         try:
-            if body.mode=='model':plan=agent_model.select_plan(body.question,selection)
+            if body.mode=='model':plan=agent_model.select_plan(body.question,selection,settings=engine.runtime_settings)
             else:plan=agent_model.QueryPlan(intent=body.mode,sku_text='',warehouse_text='',issue=body.issue)
             # Reauthenticate after the external request; revoked sessions cannot read results.
             current,_=actor_for(request,True)

@@ -2,9 +2,10 @@
 const phaseStatus=s=>({open:'待收货',partial:'部分收货',completed:'已收齐',closed:'已关闭',pending:'待审批',approved:'已通过',rejected:'已驳回',preview:'待导入',invalid:'校验未通过',applied:'已导入'}[s]||s);
 const phaseViews=['imports','purchases','approvals'];
 let phase={imports:[],purchases:[],approvals:[],preview:null,selectedOrder:null};
-const workflowStorage=()=>`workflow-pending:${state.user?.id||state.user?.name}`;
+const workflowStorage=()=>`workflow-pending:${m1StorageScope()}`;
 function workflowPending(){try{return JSON.parse(sessionStorage.getItem(workflowStorage())||'null')}catch{return null}}
 async function workflowWrite(path,body,pending=null){
+ if(m1Pending())throw new Error('有一笔基础资料操作结果未确认，请先重试原请求。');
  if(state.busy)throw new Error('操作处理中，请稍候');
  const storage=workflowStorage();const existing=workflowPending();
  if(existing&&!pending)throw new Error('有一笔结果未确认的操作，请先使用页面顶部按钮重试原请求。');
@@ -27,7 +28,7 @@ function phasePage(){
 function importPage(){
  if(state.user.role!=='admin')return heading('批量导入','仅管理员可预览和确认导入。');
  const batch=phase.preview;
- return heading('批量导入','先预览、再确认。整批成功或整批回滚，不会只导入一半。')+`<section class="card form-card"><form id="import-form"><div class="form-grid"><label>导入类型<select name="kind" id="import-kind"><option value="skus">商品资料</option><option value="warehouses">仓库资料</option><option value="opening">期初库存与占用</option></select></label><label>上传 UTF-8 CSV<input id="import-file" type="file" accept=".csv,text/csv"></label></div><a id="import-template" href="/api/v1/imports/template/skus" download>下载所选类型的空白模板</a><p class="muted">Excel 可另存为 UTF-8 CSV。每批最多500行。先导入商品和仓库，再导入期初；已有库存历史的组合不能覆盖。</p><details><summary>期初库存列说明</summary><p class="muted">g 良品、q 待验、d 残次、r 订单占用、t 调拨占用、h 冻结、b 安全量；offline 线下额度、online 线上额度、pending 待发布、withdrawing 待撤回。空白数量按0处理。良品必须覆盖占用和额度。占用为期初汇总，不自动创建原业务单据。</p></details><label>CSV内容<textarea name="csv_text" id="import-text" rows="7" required placeholder="code,name,spec,unit,barcode"></textarea></label><p class="error" id="phase-error" role="alert"></p><button class="primary" type="submit">校验并预览</button></form></section>`+
+ return heading('批量导入','先预览、再确认。整批成功或整批回滚，不会只导入一半。')+`<section class="card form-card"><form id="import-form"><div class="form-grid"><label>导入类型<select name="kind" id="import-kind"><option value="skus">商品资料</option><option value="warehouses">仓库资料</option><option value="opening">期初库存与占用</option></select></label><label>上传 UTF-8 CSV<input id="import-file" type="file" accept=".csv,text/csv"></label></div><a id="import-template" href="/api/v1/imports/template/skus" download>下载所选类型的空白模板</a><p class="muted">Excel 可另存为 UTF-8 CSV。每批最多500行。先导入商品和仓库，再导入期初；已有库存历史的组合不能覆盖。</p><details><summary>期初库存列说明</summary><p class="muted">g 良品、q 待验、d 残次、r 订单占用、t 调拨占用、h 冻结、b 物理保留；offline 线下额度、online 线上额度、pending 待发布、withdrawing 待撤回。空白数量按0处理。良品必须覆盖占用和额度。占用为期初汇总，不自动创建原业务单据。</p></details><label>CSV内容<textarea name="csv_text" id="import-text" rows="7" required placeholder="code,name,spec,unit,barcode"></textarea></label><p class="error" id="phase-error" role="alert"></p><button class="primary" type="submit">校验并预览</button></form></section>`+
  (batch?`<section class="card form-card"><h2>预览结果 · ${phaseStatus(batch.status)}</h2><p>有效 ${batch.rows.length} 行 / 错误 ${batch.errors.length} 行</p>${batch.errors.map(e=>`<p class="error">第${e.line}行：${esc(e.message)}</p>`).join('')}<div class="table-wrap"><table><thead><tr>${Object.keys(batch.rows[0]||{}).map(k=>`<th>${esc(k)}</th>`).join('')}</tr></thead><tbody>${batch.rows.map(row=>`<tr>${Object.values(row).map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><button class="primary" id="apply-import" ${batch.status!=='preview'?'disabled':''}>确认整批导入</button><p id="import-result" role="status"></p></section>`:'')+
  `<section class="card form-card"><h2>最近导入批次</h2><div class="table-wrap"><table><thead><tr><th>创建时间</th><th>类型</th><th>行数</th><th>状态</th></tr></thead><tbody>${phase.imports.map(b=>`<tr><td>${date(b.created_at)}</td><td>${({skus:'商品',warehouses:'仓库',opening:'期初库存'})[b.kind]}</td><td>${b.rows.length}</td><td>${phaseStatus(b.status)}</td></tr>`).join('')}</tbody></table></div></section>`;
 }

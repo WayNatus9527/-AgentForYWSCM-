@@ -1,7 +1,5 @@
 """Phase-one relational schema; SQLite local, PostgreSQL configurable."""
-import os
 from contextlib import contextmanager
-from pathlib import Path
 from sqlalchemy import (create_engine, event, MetaData, Table, Column as C, String as S,
                         Integer as I, JSON, UniqueConstraint as U, CheckConstraint as CK)
 
@@ -38,11 +36,27 @@ requests = Table('idempotency', metadata, C('id', S, primary_key=True), C('tenan
                  C('key', S), C('fingerprint', S), C('response', JSON),
                  U('tenant_id','actor_id','key'))
 
-def make_engine(url=None, connect_options=None):
-    if url is None:
-        Path('.local').mkdir(exist_ok=True)
-        url = os.environ.get('DATABASE_URL', 'sqlite:///.local/inventory.db')
-    engine = create_engine(url, connect_args=({'check_same_thread': False, 'timeout': 30} if url.startswith('sqlite') else {}) | (connect_options or {}), pool_pre_ping=True)
+def make_engine(url=None, connect_options=None, *, settings=None):
+    from .config import load_settings
+    from .clock import clock_for
+    if settings is not None and url is not None:
+        raise ValueError('Supply settings or an explicit database URL, not both')
+    config = settings or load_settings(database_url=url, explicit_database=url is not None,
+                                       connect_options=connect_options)
+    from sqlalchemy.engine import make_url
+    parsed = make_url(config.database_url)
+    if parsed.get_backend_name() == 'sqlite' and parsed.database not in (None, '', ':memory:'):
+        from pathlib import Path
+        Path(parsed.database).parent.mkdir(parents=True, exist_ok=True)
+    engine = create_engine(config.database_url,
+        connect_args=({'check_same_thread': False, 'timeout': 30} if parsed.get_backend_name() == 'sqlite' else {}) | (connect_options or {}),
+        pool_pre_ping=True)
+    engine.runtime_settings = config
+    engine.runtime_fingerprint = config.fingerprint(connect_options)
+    engine.business_clock = clock_for(config)
+    if config.expected_fingerprint and engine.runtime_fingerprint != config.expected_fingerprint:
+        engine.dispose()
+        raise RuntimeError('Runtime fingerprint does not match the expected environment')
     if engine.dialect.name == 'sqlite':
         @event.listens_for(engine, 'connect')
         def setup(conn, _):

@@ -41,14 +41,23 @@ def restore(source,target):
         src.backup(dst)
         if counts(dst)!=before:raise ValueError('Restore row counts mismatch')
         # A restored copy must not revive old authentication sessions.
-        if 'sessions' in before:dst.execute('DELETE FROM sessions');dst.commit()
+        if 'sessions' in before:dst.execute('DELETE FROM sessions')
+        # A verified restore into a NEW file is the one explicit relocation path.
+        # Historical events retain their original run IDs; the destination is
+        # bound to a new fingerprint on startup. Arbitrary copied files still fail.
+        if 'runtime_bindings' in before:dst.execute('DELETE FROM runtime_bindings')
+        dst.commit()
     after=verify(target)
-    if after!={**before,**({'sessions':0} if 'sessions' in before else {})}:raise ValueError('Restore verification failed')
-    return {'restored_file':target.name,'counts':after,'sessions_invalidated':True,'verified':True}
+    expected={**before,**({'sessions':0} if 'sessions' in before else {}),**({'runtime_bindings':0} if 'runtime_bindings' in before else {})}
+    if after!=expected:raise ValueError('Restore verification failed')
+    return {'restored_file':target.name,'counts':after,'sessions_invalidated':True,
+            'runtime_rebind_required':'runtime_bindings' in before,'verified':True}
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description='Create a SQLite backup or restore into a NEW database file.')
     sub=parser.add_subparsers(dest='action',required=True)
-    make=sub.add_parser('create');make.add_argument('--source',default='.local/inventory.db');make.add_argument('--directory',default='.local/backups')
+    from .config import load_settings
+    defaults=load_settings()
+    make=sub.add_parser('create');make.add_argument('--source',default=str(defaults.data_dir/'inventory.db'));make.add_argument('--directory',default=str(defaults.data_dir/'backups'))
     recover=sub.add_parser('restore');recover.add_argument('--source',required=True);recover.add_argument('--target',required=True)
     args=parser.parse_args();print(json.dumps(snapshot(args.source,args.directory) if args.action=='create' else restore(args.source,args.target),ensure_ascii=False,indent=2))

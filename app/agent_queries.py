@@ -73,14 +73,24 @@ def execute(engine, actor, plan, warehouse_id=None, sku_id=None):
         if plan.intent in ('unsupported','clarify'):
             return {**base,'kind':plan.intent,'answer':'本查询入口只分析当前库存，不执行改账或审批，也不预测销量；需要建单请进入“辅助建单”，生成草稿后人工确认。' if plan.intent=='unsupported' else '请写明商品和仓库，或用筛选框选择。本阶段查询当前状态；异常规则固定为可分配低于20、待验大于0及未签收在途。'}
         stocks=bounded(c,select(db.balances).where(db.balances.c.tenant_id==actor['tenant_id'],db.balances.c.warehouse_id.in_(wm),db.balances.c.sku_id.in_(sm)).order_by(db.balances.c.warehouse_id,db.balances.c.sku_id))
+        from .catalog import assortments, sku_settings
+        assortment_map={(x['warehouse_id'],x['sku_id']):dict(x) for x in c.execute(select(assortments).where(assortments.c.tenant_id==actor['tenant_id'],assortments.c.warehouse_id.in_(wm),assortments.c.sku_id.in_(sm))).mappings()}
+        active_map={x['sku_id']:bool(x['active']) for x in c.execute(select(sku_settings).where(sku_settings.c.tenant_id==actor['tenant_id'],sku_settings.c.sku_id.in_(sm))).mappings()}
         for r in stocks:
             w=wm[r['warehouse_id']];s=sm[r['sku_id']]
             local=w['authority']=='local'
             row={k:r[k] for k in ('warehouse_id','sku_id','g','q','d','r','t','h','b','offline','online','pending','withdrawing','version','updated_at')}
             row.update(sku_name=s['name'],sku_code=s['code'],spec=s['spec'],unit=s['unit'],warehouse_name=w['name'],authority=w['authority'],available=available(r),unallocated=unallocated(r),offline_available=min(max(0,available(r)),r['offline']+max(0,unallocated(r))) if local else None,source='本地库存账本' if local else '人工参考快照，未接入实时库存',source_id='balance:'+r['id'])
+            assortment=assortment_map.get((r['warehouse_id'],r['sku_id']),{})
+            known=bool(assortment.get('inventory_known'))
+            eligible=known and bool(assortment.get('active')) and bool(assortment.get('replenishment')) and active_map.get(r['sku_id'],True)
+            row.update(inventory_known=known,eligible_for_replenishment=eligible,inventory_state='known' if known else 'unknown')
+            if not known:
+                for field in ('g','q','d','r','t','h','b','offline','online','pending','withdrawing','available','unallocated','offline_available'):row[field]=None
+                row['source']='已登记部分变动；期初总量未知，不能据此判断零库存或缺货'
             base['rows'].append(row)
-            if local and plan.issue in ('all','low_stock') and row['available']<LOW_STOCK:
-                base['issues'].append({'type':'low_stock','title':s['name']+' · '+w['name']+' 可分配偏低','evidence':f"可分配 {row['available']} {s['unit']} < 提醒阈值 {LOW_STOCK}；良品{r['g']} − 订单占用{r['r']} − 调拨占用{r['t']} − 冻结{r['h']} − 安全量{r['b']}。",'suggestion':'核对占用与近期需求，再决定是否采购或调拨；此提示不等于缺货预测。','source_id':row['source_id'],'view':'inventory'})
+            if local and eligible and plan.issue in ('all','low_stock') and row['available']<LOW_STOCK:
+                base['issues'].append({'type':'low_stock','title':s['name']+' · '+w['name']+' 可分配偏低','evidence':f"可分配 {row['available']} {s['unit']} < 提醒阈值 {LOW_STOCK}；良品{r['g']} − 订单占用{r['r']} − 调拨占用{r['t']} − 冻结{r['h']} − 物理保留{r['b']}。",'suggestion':'核对占用与近期需求，再决定是否采购或调拨；此提示不等于缺货预测。','source_id':row['source_id'],'view':'inventory'})
             if local and plan.issue in ('all','pending_quality') and r['q']>0:
                 base['issues'].append({'type':'pending_quality','title':s['name']+' · '+w['name']+' 有待验库存','evidence':f"当前待验 {r['q']} {s['unit']}，不计入良品可售；未据此判定超期。",'suggestion':'仓管核对退货单及普通待验批次，检验后登记良品或残次。','source_id':row['source_id'],'view':'returns' if actor['role'] in ('admin','warehouse') else 'inventory'})
         if actor['role'] in ('admin','warehouse'):
