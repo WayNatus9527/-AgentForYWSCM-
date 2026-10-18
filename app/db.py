@@ -79,7 +79,10 @@ def write(engine, tenant_id=None):
                 conn.begin()
                 if tenant_id:
                     from sqlalchemy import text
-                    conn.execute(text('SELECT pg_advisory_xact_lock(hashtext(:tenant))'), {'tenant': tenant_id})
+                    # Identical tenant IDs in separate simulation schemas must
+                    # not contend on one cluster-wide advisory lock namespace.
+                    conn.execute(text('SELECT pg_advisory_xact_lock(hashtext(:tenant))'),
+                                 {'tenant': engine.runtime_fingerprint + ':' + tenant_id})
             yield conn
             conn.commit()
         except BaseException:

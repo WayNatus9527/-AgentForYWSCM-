@@ -92,6 +92,8 @@ def movement(c, actor, row, delta, kind, source, note, expected, *,
         raise BusinessError('NOT_FOUND', '库存不存在或未授权', 404)
     if set(delta) - set(FIELDS) or any(type(v) is not int for v in delta.values()):
         raise BusinessError('INVALID_DELTA', '库存变动须使用已定义字段及整数', 422)
+    from .counting import assert_unlocked
+    assert_unlocked(c, actor, row['warehouse_id'], row['sku_id'])
     fresh = load_balance(c, actor, row['warehouse_id'], row['sku_id'])
     if fresh['version'] != expected or row['version'] != expected:
         raise BusinessError('VERSION_CONFLICT', '库存已变化，请刷新后重新申请或确认')

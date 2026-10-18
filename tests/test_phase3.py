@@ -147,11 +147,15 @@ def test_quality_reservation_protected_from_adjustment_and_generic_inspection(en
     assert inspection(c,r,1,0,4,2,'QC-002','qc-second').status_code==200
 
 def test_supplier_return_limits_and_purchase_progress_unchanged(env):
-    engine,c=env;receipt=post(c,body()).json()
+    engine,c=env;receipt=post(c,body()).json();login(c,'warehouse')
     b={'kind':'supplier','original_id':receipt['document_id'],'reference':'SUP-1','g':3,'q':1,'d':1,'expected_version':2,'reason':'质量问题退给供应商'}
-    assert send(c,'/returns',b).status_code==200
-    assert balance(engine)['g']==335 and balance(engine)['q']==1 and balance(engine)['d']==0
+    request=send(c,'/returns',b).json()
+    assert request['status']=='awaiting_review' and balance(engine)['g']==338
     assert send(c,'/returns',b).json()['replayed']
+    login(c,'admin')
+    reviewed=c.post('/api/v2/quality-dispositions/'+request['id']+'/review',json={'expected_version':1,'decision':'approve','reason':'核对退货凭证'},headers={'Idempotency-Key':'supplier-reviewed'})
+    assert reviewed.status_code==200,reviewed.text
+    assert balance(engine)['g']==335 and balance(engine)['q']==1 and balance(engine)['d']==0
     assert send(c,'/returns',{**b,'reference':'SUP-2','g':10,'q':0,'d':0,'expected_version':3},'supplier-over').status_code==409
 
 def test_return_cannot_use_reversed_original(env):
@@ -239,7 +243,7 @@ def test_phase_two_database_upgrades_without_losing_records(env):
         conn.execute(versions.delete().where(versions.c.version==3))
     migrate(engine);migrate(engine)
     assert counts(engine)==before and balance(engine)==stock
-    with engine.connect() as conn:assert list(conn.execute(select(versions.c.version).order_by(versions.c.version)).scalars())==[1,2,3,4,5]
+    with engine.connect() as conn:assert list(conn.execute(select(versions.c.version).order_by(versions.c.version)).scalars())==[1,2,3,4,5,6]
 
 def test_complete_purchase_transfer_sale_return_quality_flow(env):
     engine,c=env

@@ -30,6 +30,8 @@ class TransferAction(Strict):
     def unique(self):
         if len({x.sku_id for x in self.lines})!=len(self.lines):raise ValueError('商品行不可重复')
         return self
+from .m3_models import Details
+
 class CustomerReturn(Strict):
     kind:Literal['customer']
     original_id:Text
@@ -37,6 +39,7 @@ class CustomerReturn(Strict):
     quantity:Positive
     expected_version:Qty
     reason:Reason
+    details:Details|None=None
 class SupplierReturn(Strict):
     kind:Literal['supplier']
     original_id:Text
@@ -50,6 +53,7 @@ class SupplierReturn(Strict):
     def total(self):
         if not self.g+self.q+self.d:raise ValueError('退货数量必须大于零')
         return self
+    details:Details|None=None
 class Inspection(Strict):
     reference:Text
     return_id:Text|None=None
@@ -67,6 +71,7 @@ class Inspection(Strict):
             if self.return_version is None or self.warehouse_id or self.sku_id:raise ValueError('退货质检需要退货版本，不能指定其他仓库或商品')
         elif not self.warehouse_id or not self.sku_id or self.return_version is not None:raise ValueError('普通质检需要仓库与商品')
         return self
+    details:Details|None=None
 class AccountBase(Strict):
     name:Text
     role:Literal['admin','warehouse','cashier']
@@ -114,14 +119,18 @@ def install(app,engine,actor_for,scope):
         with engine.connect() as c:return [dict(x) for x in c.execute(scope(actor,op.returns).order_by(op.returns.c.created_at.desc()).limit(100)).mappings()]
     @app.post('/api/v1/returns')
     def return_create(body:Annotated[CustomerReturn|SupplierReturn,Field(discriminator='kind')],request:Request,idempotency_key:Key):
-        actor,_=actor_for(request,True);return op.return_create(engine,actor,body.model_dump(),idempotency_key)
+        actor,_=actor_for(request,True);payload=body.model_dump()
+        if payload.get('details') is None:payload.pop('details',None)
+        return op.return_create(engine,actor,payload,idempotency_key)
     @app.get('/api/v1/quality')
     def quality(request:Request):
         actor,_=actor_for(request);require_role(actor,'admin','warehouse')
         with engine.connect() as c:return [dict(x) for x in c.execute(scope(actor,op.quality).order_by(op.quality.c.created_at.desc()).limit(100)).mappings()]
     @app.post('/api/v1/quality')
     def inspect(body:Inspection,request:Request,idempotency_key:Key):
-        actor,_=actor_for(request,True);return op.inspect_quality(engine,actor,body.model_dump(),idempotency_key)
+        actor,_=actor_for(request,True);payload=body.model_dump()
+        if payload.get('details') is None:payload.pop('details',None)
+        return op.inspect_quality(engine,actor,payload,idempotency_key)
     @app.get('/api/v1/users')
     def users(request:Request):
         actor,_=actor_for(request);require_role(actor,'admin')

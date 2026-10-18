@@ -1,0 +1,2218 @@
+{
+  "product_name": "跨境电商供应链管理Agent助手",
+  "version": "0.6.0",
+  "stage": "M2",
+  "date": "2026-10-17",
+  "schema_version": 5,
+  "data_policy": "synthetic_only",
+  "sqlite": {
+    "passed": 250,
+    "skipped": 1,
+    "seconds": 83.52,
+    "log_sha256": "84c85848131fedd79d5dd863875e45c3cbc687beaef619a41703606c85f84565",
+    "skip_reason": "PostgreSQL-only role privilege drift acceptance"
+  },
+  "postgresql": {
+    "passed": 249,
+    "skipped": 2,
+    "seconds": 108.37,
+    "log_sha256": "0405ed28d3f44c7086ca1ac266909f65939f2cdd148b6ff49700c74226c7a400",
+    "server_version": "postgres (PostgreSQL) 16.2",
+    "skip_reason": "Two SQLite-only file backup/restore tests"
+  },
+  "independent_validation": {
+    "sqlite": {
+      "batch_id": "batch-960212783a2e473e",
+      "purpose": "validation",
+      "workers": 2,
+      "elapsed_seconds": 55.903,
+      "passed": 100,
+      "failed": 0,
+      "checks": 9680,
+      "scenarios": {
+        "data_latency": 11,
+        "demand_spike": 11,
+        "mixed": 11,
+        "normal": 12,
+        "returns_surge": 11,
+        "slow_sales": 11,
+        "supplier_delay": 11,
+        "transport_exception": 11,
+        "warehouse_congestion": 11
+      },
+      "coverage": {
+        "inspection_rate": {
+          "0.0": 41,
+          "0.25": 36,
+          "1.0": 23
+        },
+        "quality_units_per_hour": {
+          "1": 39,
+          "10": 39,
+          "100": 22
+        },
+        "return_rate": {
+          "0.0": 23,
+          "0.2": 29,
+          "0.8": 25,
+          "1.0": 23
+        },
+        "sales_distribution": {
+          "long_tail": 33,
+          "peaked": 33,
+          "uniform": 34
+        },
+        "shipping_units_per_hour": {
+          "1": 30,
+          "200": 32,
+          "50": 38
+        },
+        "sku_count": {
+          "1": 26,
+          "2": 26,
+          "3": 18,
+          "4": 30
+        },
+        "warehouse_count": {
+          "2": 33,
+          "3": 37,
+          "4": 30
+        }
+      },
+      "fault_coverage": {
+        "crash_after_commit": 11,
+        "crash_before_commit": 11,
+        "delay": 22,
+        "disconnect": 11,
+        "duplicate": 11,
+        "loss_redelivery": 22,
+        "rate_limit": 11,
+        "reorder": 22,
+        "timeout_after_success": 11
+      },
+      "cases": [
+        {
+          "checks": 94,
+          "error": null,
+          "failures": [],
+          "input_sha256": "33a15af7415745c278539eeec62ff9535a11bae56139dd44bdd18ec2e6bb0143",
+          "run_id": "val-3dd4045b54516140",
+          "scenario": "normal",
+          "seed": 130767162890818,
+          "status": "passed"
+        },
+        {
+          "checks": 136,
+          "error": null,
+          "failures": [],
+          "input_sha256": "2ac4e18dc85950bdd70d35069ca31acbbd855da1a8c5dc2481103784c90110dd",
+          "run_id": "val-e53b2a33d63880e2",
+          "scenario": "supplier_delay",
+          "seed": 130767162890819,
+          "status": "passed"
+        },
+        {
+          "checks": 112,
+          "error": null,
+          "failures": [],
+          "input_sha256": "55d390e9f348771ea4fb4e414a712d6694e9794dc90c918764863969da82a1a7",
+          "run_id": "val-4493365683ddc5c8",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890820,
+          "status": "passed"
+        },
+        {
+          "checks": 82,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c0ef3546ad5baa51125340a4c279d92603db059f0415bb5eed8b4cfd0c8c3080",
+          "run_id": "val-3420a9bd8dd55ead",
+          "scenario": "transport_exception",
+          "seed": 130767162890821,
+          "status": "passed"
+        },
+        {
+          "checks": 100,
+          "error": null,
+          "failures": [],
+          "input_sha256": "0dbbf56ee8c55c8a7971bacaa1d777f74fbc257cb3ba694b8c33e23692b32ffe",
+          "run_id": "val-4c0a9f7b73b65171",
+          "scenario": "demand_spike",
+          "seed": 130767162890822,
+          "status": "passed"
+        },
+        {
+          "checks": 54,
+          "error": null,
+          "failures": [],
+          "input_sha256": "28602687f0d70a587d082d7cfb0c01f90c3153d49a42a490554278e636a82576",
+          "run_id": "val-11833647200d56f5",
+          "scenario": "slow_sales",
+          "seed": 130767162890823,
+          "status": "passed"
+        },
+        {
+          "checks": 62,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f9e70b48eefd50816b5ae82825f1f0606ffab40247dda2c6db7d2aa637d13dcc",
+          "run_id": "val-1fd38edf585674d7",
+          "scenario": "returns_surge",
+          "seed": 130767162890824,
+          "status": "passed"
+        },
+        {
+          "checks": 92,
+          "error": null,
+          "failures": [],
+          "input_sha256": "44c03af1bd9439957d2602c78967a1d6715a7d4a8482c7090f8c0c850837c639",
+          "run_id": "val-602da4a70b060edb",
+          "scenario": "data_latency",
+          "seed": 130767162890825,
+          "status": "passed"
+        },
+        {
+          "checks": 96,
+          "error": null,
+          "failures": [],
+          "input_sha256": "4edbd4aaa42ae5169581ec24042567cc42ab06d2a8d36809b59c8ee7eeb41ec4",
+          "run_id": "val-cbe3e9222aa77336",
+          "scenario": "mixed",
+          "seed": 130767162890826,
+          "status": "passed"
+        },
+        {
+          "checks": 58,
+          "error": null,
+          "failures": [],
+          "input_sha256": "177a5336a2014b25fce22a8b40662953f5809714498588bcd871a39b9bb788a1",
+          "run_id": "val-862bd3c9bf9bafff",
+          "scenario": "normal",
+          "seed": 130767162890827,
+          "status": "passed"
+        },
+        {
+          "checks": 114,
+          "error": null,
+          "failures": [],
+          "input_sha256": "785284d09c5f5fa82bd6e3124281246763fb74167a3ca430776dd3ba9dd58858",
+          "run_id": "val-6990130cd581d3e0",
+          "scenario": "supplier_delay",
+          "seed": 130767162890828,
+          "status": "passed"
+        },
+        {
+          "checks": 70,
+          "error": null,
+          "failures": [],
+          "input_sha256": "210ba15b2e979a189a6b8fb062bc75b701cd3f1164f2f50e5bc660dc8afbc855",
+          "run_id": "val-622c481299b73e6b",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890829,
+          "status": "passed"
+        },
+        {
+          "checks": 96,
+          "error": null,
+          "failures": [],
+          "input_sha256": "fea6417c6ee8eb65333d1d9a942cfcec06459de4baa9807be80c57dae61d2bbd",
+          "run_id": "val-0dfde0340455b05d",
+          "scenario": "transport_exception",
+          "seed": 130767162890830,
+          "status": "passed"
+        },
+        {
+          "checks": 136,
+          "error": null,
+          "failures": [],
+          "input_sha256": "82608cc6ef2f35c13ed47052518c0d2005c9d5035dbf9d791bb85aef3ce31c68",
+          "run_id": "val-6dff261a032532c1",
+          "scenario": "demand_spike",
+          "seed": 130767162890831,
+          "status": "passed"
+        },
+        {
+          "checks": 108,
+          "error": null,
+          "failures": [],
+          "input_sha256": "d9d5988d083ef315000ed9c5dce350d702e1deabc7ed33e7ed855c720294ff05",
+          "run_id": "val-b0988f3609d44dbf",
+          "scenario": "slow_sales",
+          "seed": 130767162890832,
+          "status": "passed"
+        },
+        {
+          "checks": 118,
+          "error": null,
+          "failures": [],
+          "input_sha256": "ae641238bade0f914832cbd7bb2f2285666e591e314c4105b23fe86da1a664b8",
+          "run_id": "val-79d5fd62cad10306",
+          "scenario": "returns_surge",
+          "seed": 130767162890833,
+          "status": "passed"
+        },
+        {
+          "checks": 114,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f771512f67418db147476ca018bf4e4a6a578842d4ef0fdeb04211eb23af4dd4",
+          "run_id": "val-07ad8609e084c5fa",
+          "scenario": "data_latency",
+          "seed": 130767162890834,
+          "status": "passed"
+        },
+        {
+          "checks": 88,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c7bbc83c46880c93b6bc92a7a368f9b6e5b380b462671b25b4fc2f49032d464a",
+          "run_id": "val-10a8e0ebdde7852c",
+          "scenario": "mixed",
+          "seed": 130767162890835,
+          "status": "passed"
+        },
+        {
+          "checks": 72,
+          "error": null,
+          "failures": [],
+          "input_sha256": "428d84a6948a7ae65d0946118bf637165f520e6bc60d1b7c7f135a2098feec1c",
+          "run_id": "val-85b073eaafe75960",
+          "scenario": "normal",
+          "seed": 130767162890836,
+          "status": "passed"
+        },
+        {
+          "checks": 130,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c0cb872d9e87d3babb2da7411ab3b29f4c6e4dc0cb978cf2b009418b70b1f2f4",
+          "run_id": "val-21cb1169117c0223",
+          "scenario": "supplier_delay",
+          "seed": 130767162890837,
+          "status": "passed"
+        },
+        {
+          "checks": 104,
+          "error": null,
+          "failures": [],
+          "input_sha256": "bb54f5651b8c47781b5e35e0fccd4737df3c1f7a584ad9eb7c3561cde8e94fa5",
+          "run_id": "val-99eca0b8f7256f04",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890838,
+          "status": "passed"
+        },
+        {
+          "checks": 92,
+          "error": null,
+          "failures": [],
+          "input_sha256": "18fb937693ebd54383b85f198f4d86ed5eee5853431eb60c352b9b06d939235a",
+          "run_id": "val-d4a9324cebc827ce",
+          "scenario": "transport_exception",
+          "seed": 130767162890839,
+          "status": "passed"
+        },
+        {
+          "checks": 110,
+          "error": null,
+          "failures": [],
+          "input_sha256": "64783e7c8310661392a5a4ff7d62a2013a0b8b14b59f2ed54b9015d8c8ffd9b4",
+          "run_id": "val-98090e7e97cdc9df",
+          "scenario": "demand_spike",
+          "seed": 130767162890840,
+          "status": "passed"
+        },
+        {
+          "checks": 58,
+          "error": null,
+          "failures": [],
+          "input_sha256": "fe218ea3edb71262a082e09d6cd590e3b33b166ff9c4fc9c090db9652807c1ba",
+          "run_id": "val-5c312524499b7312",
+          "scenario": "slow_sales",
+          "seed": 130767162890841,
+          "status": "passed"
+        },
+        {
+          "checks": 104,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9bb968c22045c0fcbeb3d4c176ac4366a9a2b7f1dd808c0c2ceb0be45d73b974",
+          "run_id": "val-bde5b545351b4b9c",
+          "scenario": "returns_surge",
+          "seed": 130767162890842,
+          "status": "passed"
+        },
+        {
+          "checks": 152,
+          "error": null,
+          "failures": [],
+          "input_sha256": "082600dac83b2a05fb3de5b14f1515c6d5ff391f73eebeede36731d5897f2ee7",
+          "run_id": "val-3c6d3393315b6ac2",
+          "scenario": "data_latency",
+          "seed": 130767162890843,
+          "status": "passed"
+        },
+        {
+          "checks": 120,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7a134604f708c2b9d7c5bbeca7f5af9fd0391ffbf30adebb5236be999c0698d0",
+          "run_id": "val-56a4e8fa25450a05",
+          "scenario": "mixed",
+          "seed": 130767162890844,
+          "status": "passed"
+        },
+        {
+          "checks": 92,
+          "error": null,
+          "failures": [],
+          "input_sha256": "adbbededfe87a1975b3ef4ffbc39afe077a75f49172a8c151c1855cf63dddcad",
+          "run_id": "val-f3af19e9fc87b68b",
+          "scenario": "normal",
+          "seed": 130767162890845,
+          "status": "passed"
+        },
+        {
+          "checks": 112,
+          "error": null,
+          "failures": [],
+          "input_sha256": "ec384873ae145061506237fb9d8f4c6b718e7c716ed5d2bbfb57dd7dc095ccbb",
+          "run_id": "val-14dd88e142e4793b",
+          "scenario": "supplier_delay",
+          "seed": 130767162890846,
+          "status": "passed"
+        },
+        {
+          "checks": 54,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f8745fab13fc84ea8c23ccf7a09269ec15f4104fd0e835ab9e86a26e6ea79c7d",
+          "run_id": "val-61b3c0cf7ca8cb80",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890847,
+          "status": "passed"
+        },
+        {
+          "checks": 50,
+          "error": null,
+          "failures": [],
+          "input_sha256": "d290fac9ea360cb64fd6c36fdfc41181592da715e925bb4613a78de2e9355840",
+          "run_id": "val-adde1a92ee6a3e49",
+          "scenario": "transport_exception",
+          "seed": 130767162890848,
+          "status": "passed"
+        },
+        {
+          "checks": 64,
+          "error": null,
+          "failures": [],
+          "input_sha256": "518e59565cb5d96d6da701ed1af78510a48df46d8d254923dd1ff3897a50b3f0",
+          "run_id": "val-dfbfa8900233e59c",
+          "scenario": "demand_spike",
+          "seed": 130767162890849,
+          "status": "passed"
+        },
+        {
+          "checks": 144,
+          "error": null,
+          "failures": [],
+          "input_sha256": "b6748ab37f49cd379babc680d9c3cba976f389a8b72364b39f64dd4563d979ee",
+          "run_id": "val-9aaf4ae0da86f92d",
+          "scenario": "slow_sales",
+          "seed": 130767162890850,
+          "status": "passed"
+        },
+        {
+          "checks": 108,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f32c4d2dca2b71f542c6ca18522ae1ed5249c82011b17f2b051cfba200fe7ae3",
+          "run_id": "val-d1438cead18f7661",
+          "scenario": "returns_surge",
+          "seed": 130767162890851,
+          "status": "passed"
+        },
+        {
+          "checks": 108,
+          "error": null,
+          "failures": [],
+          "input_sha256": "910db76b47e912518bb7eb6a547b2ec3349cb4c0ec06f936248cf3515b754972",
+          "run_id": "val-feeed585e198a9e1",
+          "scenario": "data_latency",
+          "seed": 130767162890852,
+          "status": "passed"
+        },
+        {
+          "checks": 64,
+          "error": null,
+          "failures": [],
+          "input_sha256": "8d901ed812cc26c76565aff695b5b8d123dfbd7dbc1dcfd280a6f7915de61c9a",
+          "run_id": "val-533a7ea684764ad9",
+          "scenario": "mixed",
+          "seed": 130767162890853,
+          "status": "passed"
+        },
+        {
+          "checks": 48,
+          "error": null,
+          "failures": [],
+          "input_sha256": "45646d2c235009a315075fd87a4d8da26d271ebdb07e7ee8e2fe578e3b1495f0",
+          "run_id": "val-9d30f2ae7706d032",
+          "scenario": "normal",
+          "seed": 130767162890854,
+          "status": "passed"
+        },
+        {
+          "checks": 108,
+          "error": null,
+          "failures": [],
+          "input_sha256": "65b344e783cba7db6a11c8f3d8d510d80b9beeb87e355a628fdad055e5881b02",
+          "run_id": "val-d741bba8c0b19505",
+          "scenario": "supplier_delay",
+          "seed": 130767162890855,
+          "status": "passed"
+        },
+        {
+          "checks": 64,
+          "error": null,
+          "failures": [],
+          "input_sha256": "cda55d7094d2e92472d85b00a3013150e2082eb0dc49ca7db48ea3a738999ea9",
+          "run_id": "val-3c7b9ac9a22189e2",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890856,
+          "status": "passed"
+        },
+        {
+          "checks": 116,
+          "error": null,
+          "failures": [],
+          "input_sha256": "2fbe31ffaa3b26c2fba0852b293e1c7f0ae25e926c525532bc18fc3478539b11",
+          "run_id": "val-2d843c94801d3bfb",
+          "scenario": "transport_exception",
+          "seed": 130767162890857,
+          "status": "passed"
+        },
+        {
+          "checks": 112,
+          "error": null,
+          "failures": [],
+          "input_sha256": "4d3d0ca1a59dde8460ee80e635649b41a16322f0b99a2f95ea9704515d232627",
+          "run_id": "val-504ab4ce08ff7350",
+          "scenario": "demand_spike",
+          "seed": 130767162890858,
+          "status": "passed"
+        },
+        {
+          "checks": 104,
+          "error": null,
+          "failures": [],
+          "input_sha256": "fff442f76c89831b6a9a9233d88100628ff0f9272b6dbf9a5e68f5899a5898e5",
+          "run_id": "val-62b4672a6a5f07e0",
+          "scenario": "slow_sales",
+          "seed": 130767162890859,
+          "status": "passed"
+        },
+        {
+          "checks": 102,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f2e361505d690e54873600eba62dd885ce69110eae6fbcade4e8a3e48bb1ce32",
+          "run_id": "val-30e5e786509f34b8",
+          "scenario": "returns_surge",
+          "seed": 130767162890860,
+          "status": "passed"
+        },
+        {
+          "checks": 52,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7740b9f20a51b6d3dc52ccba7d89f2f3d3c95454e6c8b28b543aeef3089fdff3",
+          "run_id": "val-2721c814c473923b",
+          "scenario": "data_latency",
+          "seed": 130767162890861,
+          "status": "passed"
+        },
+        {
+          "checks": 118,
+          "error": null,
+          "failures": [],
+          "input_sha256": "92b0bbe37e9b5068706643652b4ba8accfd0ded619b21c81abc5d7c376bae245",
+          "run_id": "val-fa0c9a168dad6991",
+          "scenario": "mixed",
+          "seed": 130767162890862,
+          "status": "passed"
+        },
+        {
+          "checks": 144,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c212246810c06571233e681811a775c8d2f9400894f91d16cb1fbd32e469eacb",
+          "run_id": "val-0f1ebf4307da1872",
+          "scenario": "normal",
+          "seed": 130767162890863,
+          "status": "passed"
+        },
+        {
+          "checks": 134,
+          "error": null,
+          "failures": [],
+          "input_sha256": "aa69beba5a8ef40005a51d2e60dfc38fc207b341b19adbbd099da2b1a7a7bb74",
+          "run_id": "val-47b0217c263ece05",
+          "scenario": "supplier_delay",
+          "seed": 130767162890864,
+          "status": "passed"
+        },
+        {
+          "checks": 90,
+          "error": null,
+          "failures": [],
+          "input_sha256": "53c36226d214aee9a9acd3af880591d7601c5c841c8b1c3ba29b25a663ad118c",
+          "run_id": "val-4e071a35d1134bd9",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890865,
+          "status": "passed"
+        },
+        {
+          "checks": 46,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1a4e255ee1fd07f7d98fbfbb8fae9ee33b7b201cc002de15e44f4f9a380af3ed",
+          "run_id": "val-7ee3ad6caceedf19",
+          "scenario": "transport_exception",
+          "seed": 130767162890866,
+          "status": "passed"
+        },
+        {
+          "checks": 132,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c5170aec90f2cefb14e7e49edbe1dd162dd1138d845fa1749737b19170a4929c",
+          "run_id": "val-e5d04bc300461647",
+          "scenario": "demand_spike",
+          "seed": 130767162890867,
+          "status": "passed"
+        },
+        {
+          "checks": 112,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3ad18cff781751a2baebf0a0538fa7c55e049e8254842951fdeeac4c79df92fc",
+          "run_id": "val-93760b50d87d1ddc",
+          "scenario": "slow_sales",
+          "seed": 130767162890868,
+          "status": "passed"
+        },
+        {
+          "checks": 112,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3ffe380e5c8a6897f7e50efe7c5db02e4c7630551e6ea27b02e69b1aa502d815",
+          "run_id": "val-ef56e0e1292bcc07",
+          "scenario": "returns_surge",
+          "seed": 130767162890869,
+          "status": "passed"
+        },
+        {
+          "checks": 120,
+          "error": null,
+          "failures": [],
+          "input_sha256": "8985b1f233db4122c1e36b123a747f3220920932c1fc6e32c94c6f4bc807cb81",
+          "run_id": "val-eda08f2d8f69517f",
+          "scenario": "data_latency",
+          "seed": 130767162890870,
+          "status": "passed"
+        },
+        {
+          "checks": 134,
+          "error": null,
+          "failures": [],
+          "input_sha256": "e51f47c31859b3ef802f6b1bcc7ad4a8f341f42810743a870c1ea346e2b2b919",
+          "run_id": "val-a3f94d4c9c7fd888",
+          "scenario": "mixed",
+          "seed": 130767162890871,
+          "status": "passed"
+        },
+        {
+          "checks": 66,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9d8618c534a3be6028fa6a586754106e3f149f3232ca7443a3c6cace4188cd1a",
+          "run_id": "val-841bfd5b9bdee330",
+          "scenario": "normal",
+          "seed": 130767162890872,
+          "status": "passed"
+        },
+        {
+          "checks": 52,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c61796a8bac1aa554edd9bd332094253b9d7985eb1c21ec73833756f5dbcdc0d",
+          "run_id": "val-f2db9ebf9819f215",
+          "scenario": "supplier_delay",
+          "seed": 130767162890873,
+          "status": "passed"
+        },
+        {
+          "checks": 74,
+          "error": null,
+          "failures": [],
+          "input_sha256": "4bb6423e380c9c468a3ce5afa427a2754eff8b16fc2a91c401059eeae59d70ef",
+          "run_id": "val-473f76e8b298a421",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890874,
+          "status": "passed"
+        },
+        {
+          "checks": 84,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3f2edeb24be7e3ac6f39381fbaceeddb52f28227b294ecd31458cb27a3286dd5",
+          "run_id": "val-cf881d2fd30b089c",
+          "scenario": "transport_exception",
+          "seed": 130767162890875,
+          "status": "passed"
+        },
+        {
+          "checks": 94,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3c96b8ec7dbfd2e4fad4f1191b6c7f63c335733f1610fad0928903285669fdb4",
+          "run_id": "val-dab17e1cb937c62a",
+          "scenario": "demand_spike",
+          "seed": 130767162890876,
+          "status": "passed"
+        },
+        {
+          "checks": 82,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c6be22927137657e71e31d02dbfe879b4064bfc276cd718254271b4a92734a4a",
+          "run_id": "val-2f2e5727bc83314b",
+          "scenario": "slow_sales",
+          "seed": 130767162890877,
+          "status": "passed"
+        },
+        {
+          "checks": 128,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9b2e3952a27f0cfa6092ef3c899dcf5a1b841395ce3dd39854cb302a096ca1f6",
+          "run_id": "val-b13ab910f8dcb798",
+          "scenario": "returns_surge",
+          "seed": 130767162890878,
+          "status": "passed"
+        },
+        {
+          "checks": 72,
+          "error": null,
+          "failures": [],
+          "input_sha256": "2e764059f302c628ffc674d671422704c2515cbfe70c6397bc317e1cb31cdf84",
+          "run_id": "val-8b60371176fe76fb",
+          "scenario": "data_latency",
+          "seed": 130767162890879,
+          "status": "passed"
+        },
+        {
+          "checks": 96,
+          "error": null,
+          "failures": [],
+          "input_sha256": "ed3e251409740818b829fbefd0797cad6d729127abfd1954aa15551706792be0",
+          "run_id": "val-d95a13812803cc03",
+          "scenario": "mixed",
+          "seed": 130767162890880,
+          "status": "passed"
+        },
+        {
+          "checks": 112,
+          "error": null,
+          "failures": [],
+          "input_sha256": "97e18b27ce41da03a083593cb047d3987be46141bb67e237a5e37df5a053f4d2",
+          "run_id": "val-97946f694d69b880",
+          "scenario": "normal",
+          "seed": 130767162890881,
+          "status": "passed"
+        },
+        {
+          "checks": 54,
+          "error": null,
+          "failures": [],
+          "input_sha256": "552eabfdde450de5bfd98c8ef0fecfc5e6b55ecf6ec94e42c0bd1d3698fac39b",
+          "run_id": "val-038f66a221bfe3eb",
+          "scenario": "supplier_delay",
+          "seed": 130767162890882,
+          "status": "passed"
+        },
+        {
+          "checks": 84,
+          "error": null,
+          "failures": [],
+          "input_sha256": "193de03303606c3001d8f7f8255d603823a864dc3304d221b584d4e798666085",
+          "run_id": "val-b9c3e8f91d5ee68c",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890883,
+          "status": "passed"
+        },
+        {
+          "checks": 132,
+          "error": null,
+          "failures": [],
+          "input_sha256": "29115adaf5db0c08e99765d6c1d72ee9614c5c80515724624468ec9c11150aff",
+          "run_id": "val-c39c2e0ad958318a",
+          "scenario": "transport_exception",
+          "seed": 130767162890884,
+          "status": "passed"
+        },
+        {
+          "checks": 78,
+          "error": null,
+          "failures": [],
+          "input_sha256": "5251f8217382fe37724c6e213a4bf1a4615158a0d924995a62c4594ea5c27d82",
+          "run_id": "val-535d467f9f16994a",
+          "scenario": "demand_spike",
+          "seed": 130767162890885,
+          "status": "passed"
+        },
+        {
+          "checks": 138,
+          "error": null,
+          "failures": [],
+          "input_sha256": "30d85b426bbf721e0d5c97fca2c57bd2598d64361c344396866fb251c424453f",
+          "run_id": "val-d5a9aa25c30d791e",
+          "scenario": "slow_sales",
+          "seed": 130767162890886,
+          "status": "passed"
+        },
+        {
+          "checks": 126,
+          "error": null,
+          "failures": [],
+          "input_sha256": "2ca1f41bc34783eeaa57872e93fb84a9d51d9fc05b0d013efb3d92725b260f90",
+          "run_id": "val-ae29aea56acbdb83",
+          "scenario": "returns_surge",
+          "seed": 130767162890887,
+          "status": "passed"
+        },
+        {
+          "checks": 98,
+          "error": null,
+          "failures": [],
+          "input_sha256": "d5c22ff93043ba7a8c379a8226c2a039dedfbf27a6a34e5e08e1d3bc2345e5bf",
+          "run_id": "val-c7612370f1a79c86",
+          "scenario": "data_latency",
+          "seed": 130767162890888,
+          "status": "passed"
+        },
+        {
+          "checks": 92,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c1201a3db1ede4f664ad089d02ba8c25c30da52c95d9fcb51d2c448c3feeecbc",
+          "run_id": "val-3dcb1afd586e4017",
+          "scenario": "mixed",
+          "seed": 130767162890889,
+          "status": "passed"
+        },
+        {
+          "checks": 104,
+          "error": null,
+          "failures": [],
+          "input_sha256": "bba7ee05e59031465378c1b8bd3bbd3e547ec5d5dc0e39b6022eb4b2d2e8406f",
+          "run_id": "val-6b6bbe8b2856c0d8",
+          "scenario": "normal",
+          "seed": 130767162890890,
+          "status": "passed"
+        },
+        {
+          "checks": 68,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f242b5212be7382f032ef9361c3e3c9567259c3caae53e970e8966c3c96244ba",
+          "run_id": "val-01f6844d935b9f62",
+          "scenario": "supplier_delay",
+          "seed": 130767162890891,
+          "status": "passed"
+        },
+        {
+          "checks": 106,
+          "error": null,
+          "failures": [],
+          "input_sha256": "cad93d29edad894ae5d1b8d6643a8b6f612e1f1050bc235bf9abda7fc174c5bc",
+          "run_id": "val-6b66c2dad6bd7047",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890892,
+          "status": "passed"
+        },
+        {
+          "checks": 74,
+          "error": null,
+          "failures": [],
+          "input_sha256": "d49ffb01b4bf80e8b9a8228a87f210f065049ee2d2ee64501954b9a967b51f3b",
+          "run_id": "val-c6d9cb7000561e99",
+          "scenario": "transport_exception",
+          "seed": 130767162890893,
+          "status": "passed"
+        },
+        {
+          "checks": 66,
+          "error": null,
+          "failures": [],
+          "input_sha256": "876d03f4fb3689116524fb94de412ad8e34666df636a6cdbfe4523d6b1720f31",
+          "run_id": "val-6a0b272228151f7e",
+          "scenario": "demand_spike",
+          "seed": 130767162890894,
+          "status": "passed"
+        },
+        {
+          "checks": 124,
+          "error": null,
+          "failures": [],
+          "input_sha256": "764bdad3892cf42d37fd18d2bff469be7ce5a98f5a5416be7d93e30dcf4040dc",
+          "run_id": "val-f39d03a7f71b95df",
+          "scenario": "slow_sales",
+          "seed": 130767162890895,
+          "status": "passed"
+        },
+        {
+          "checks": 102,
+          "error": null,
+          "failures": [],
+          "input_sha256": "2755e2effaf37503dcc2e92c2747b71964e2a6b50e7dabeec158d1b2c0313841",
+          "run_id": "val-c2ed053cb168c8b9",
+          "scenario": "returns_surge",
+          "seed": 130767162890896,
+          "status": "passed"
+        },
+        {
+          "checks": 110,
+          "error": null,
+          "failures": [],
+          "input_sha256": "08781d0a1e676ccaaefe7dc04204a8c071b91906d0f5ef2e500b00e30570fc84",
+          "run_id": "val-fc5c0055d548115d",
+          "scenario": "data_latency",
+          "seed": 130767162890897,
+          "status": "passed"
+        },
+        {
+          "checks": 62,
+          "error": null,
+          "failures": [],
+          "input_sha256": "88623d3f0f1dae428733cc2101b0aae5ed2ea54dfa8fab04055d63e41fb2d360",
+          "run_id": "val-eacd5e4edb58bacf",
+          "scenario": "mixed",
+          "seed": 130767162890898,
+          "status": "passed"
+        },
+        {
+          "checks": 134,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c97608bf17f885d3d20b00f3145379a49cbd5034116b03086c5bb3b856093275",
+          "run_id": "val-94688429fdd7984c",
+          "scenario": "normal",
+          "seed": 130767162890899,
+          "status": "passed"
+        },
+        {
+          "checks": 144,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3a7be32fbd357b45bfba4c86ad8c81a71b21bb2882733416cb204a1db108bbea",
+          "run_id": "val-4fc8175585d68553",
+          "scenario": "supplier_delay",
+          "seed": 130767162890900,
+          "status": "passed"
+        },
+        {
+          "checks": 66,
+          "error": null,
+          "failures": [],
+          "input_sha256": "e45503da076c330aab96ad8a3b432b42a78611a36c558b0b298779e7366ab286",
+          "run_id": "val-4238fc3beae33724",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890901,
+          "status": "passed"
+        },
+        {
+          "checks": 120,
+          "error": null,
+          "failures": [],
+          "input_sha256": "83f1469cffff9c30d682e637d8cc8f47835cc1d6eda4f3d4c16525aeffdd5a03",
+          "run_id": "val-50b9988bcc04d1ff",
+          "scenario": "transport_exception",
+          "seed": 130767162890902,
+          "status": "passed"
+        },
+        {
+          "checks": 92,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1d7d1b9133e960438a045770c72d207856d6594232bf46b3b476ba928b81db2c",
+          "run_id": "val-4ecec220f1fd2128",
+          "scenario": "demand_spike",
+          "seed": 130767162890903,
+          "status": "passed"
+        },
+        {
+          "checks": 48,
+          "error": null,
+          "failures": [],
+          "input_sha256": "82853437f65b74e8d175f6261cf19c9bba1a9e16826c218cf43d32d98921a8fb",
+          "run_id": "val-24d55206cfe21dfc",
+          "scenario": "slow_sales",
+          "seed": 130767162890904,
+          "status": "passed"
+        },
+        {
+          "checks": 86,
+          "error": null,
+          "failures": [],
+          "input_sha256": "5f83d1b551031b89d958c476e0992f7c8083c63818d0c24cce92271a7f3003e9",
+          "run_id": "val-e5763b80fac14408",
+          "scenario": "returns_surge",
+          "seed": 130767162890905,
+          "status": "passed"
+        },
+        {
+          "checks": 80,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7347fa53ed9ad1fa7c4238aa9e0f4402016d55696d8e4211a43dfc531351bec3",
+          "run_id": "val-e556e02903a9a726",
+          "scenario": "data_latency",
+          "seed": 130767162890906,
+          "status": "passed"
+        },
+        {
+          "checks": 126,
+          "error": null,
+          "failures": [],
+          "input_sha256": "dab26bab3972dbf94de4eef3ff2d09d7e1cd9aaafc471a7735c95dacda4a38a2",
+          "run_id": "val-1aad96fcef158e34",
+          "scenario": "mixed",
+          "seed": 130767162890907,
+          "status": "passed"
+        },
+        {
+          "checks": 150,
+          "error": null,
+          "failures": [],
+          "input_sha256": "8737bd5c844181b61e159097992cec65fcc3e20e02713523884ba1154c8a33aa",
+          "run_id": "val-c298f296df7fc08b",
+          "scenario": "normal",
+          "seed": 130767162890908,
+          "status": "passed"
+        },
+        {
+          "checks": 84,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7da32ce7651f5a602f1ba048b263f8cbb56160a7fe92408d36d46f3266146d83",
+          "run_id": "val-7745280456eba9e5",
+          "scenario": "supplier_delay",
+          "seed": 130767162890909,
+          "status": "passed"
+        },
+        {
+          "checks": 108,
+          "error": null,
+          "failures": [],
+          "input_sha256": "de7f41a057d81a870a66f3c1e746ad28a1e081cac33ebdf9542b174860c34288",
+          "run_id": "val-fdf906274e94a5e0",
+          "scenario": "warehouse_congestion",
+          "seed": 130767162890910,
+          "status": "passed"
+        },
+        {
+          "checks": 138,
+          "error": null,
+          "failures": [],
+          "input_sha256": "67df61db3d20c4c87daa57dd2ea6705e8f3160801482c53051cba0b3e0068672",
+          "run_id": "val-391ae00720b9de75",
+          "scenario": "transport_exception",
+          "seed": 130767162890911,
+          "status": "passed"
+        },
+        {
+          "checks": 58,
+          "error": null,
+          "failures": [],
+          "input_sha256": "6caf421c86670bfeedd5d6575e3d35686abb35b9faeb0eae9a9081570bf7bfd9",
+          "run_id": "val-fd43eadbfee34af4",
+          "scenario": "demand_spike",
+          "seed": 130767162890912,
+          "status": "passed"
+        },
+        {
+          "checks": 98,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9bbc55ad2ffff6a03458632abff7ea29e2abbc1cb91d109c3a894d4a9e6b41a2",
+          "run_id": "val-610e56b79336e8cb",
+          "scenario": "slow_sales",
+          "seed": 130767162890913,
+          "status": "passed"
+        },
+        {
+          "checks": 86,
+          "error": null,
+          "failures": [],
+          "input_sha256": "aa71c0db67eb7a7ca89338d0265a1676042f5d30a3de6bb6b235c583248b086b",
+          "run_id": "val-8bf8b4f6a1c73fb3",
+          "scenario": "returns_surge",
+          "seed": 130767162890914,
+          "status": "passed"
+        },
+        {
+          "checks": 60,
+          "error": null,
+          "failures": [],
+          "input_sha256": "0fe4e68069735d22a6adca65e653990bfab1fc862cae935b42cf3ffa5e9137c7",
+          "run_id": "val-b162df6b98657a85",
+          "scenario": "data_latency",
+          "seed": 130767162890915,
+          "status": "passed"
+        },
+        {
+          "checks": 76,
+          "error": null,
+          "failures": [],
+          "input_sha256": "bd66c4da98055b637ab8ae1193f19bfa5956cb74c37b33f635b3ae310a6e1ea4",
+          "run_id": "val-4539ba09f2121484",
+          "scenario": "mixed",
+          "seed": 130767162890916,
+          "status": "passed"
+        },
+        {
+          "checks": 132,
+          "error": null,
+          "failures": [],
+          "input_sha256": "14f1f47b04ae334202dcc1876b6e8ab85eeb1832e69ca58cb02787820a667e41",
+          "run_id": "val-28e1c01150c57804",
+          "scenario": "normal",
+          "seed": 130767162890917,
+          "status": "passed"
+        }
+      ],
+      "report_sha256": "f4ccc2bcff86b4271f9df72a0ca27e921a3baf8714e758ec8fba25ef7267a794",
+      "seed_range": [
+        130767162890818,
+        130767162890917
+      ]
+    },
+    "postgresql": {
+      "batch_id": "batch-8c62ee7c2fb9afb7",
+      "purpose": "validation",
+      "workers": 2,
+      "elapsed_seconds": 72.889,
+      "passed": 100,
+      "failed": 0,
+      "checks": 9644,
+      "scenarios": {
+        "data_latency": 11,
+        "demand_spike": 11,
+        "mixed": 11,
+        "normal": 12,
+        "returns_surge": 11,
+        "slow_sales": 11,
+        "supplier_delay": 11,
+        "transport_exception": 11,
+        "warehouse_congestion": 11
+      },
+      "coverage": {
+        "inspection_rate": {
+          "0.0": 21,
+          "0.25": 42,
+          "1.0": 37
+        },
+        "quality_units_per_hour": {
+          "1": 37,
+          "10": 25,
+          "100": 38
+        },
+        "return_rate": {
+          "0.0": 30,
+          "0.2": 19,
+          "0.8": 25,
+          "1.0": 26
+        },
+        "sales_distribution": {
+          "long_tail": 33,
+          "peaked": 33,
+          "uniform": 34
+        },
+        "shipping_units_per_hour": {
+          "1": 31,
+          "200": 28,
+          "50": 41
+        },
+        "sku_count": {
+          "1": 23,
+          "2": 25,
+          "3": 23,
+          "4": 29
+        },
+        "warehouse_count": {
+          "2": 36,
+          "3": 34,
+          "4": 30
+        }
+      },
+      "fault_coverage": {
+        "crash_after_commit": 11,
+        "crash_before_commit": 11,
+        "delay": 22,
+        "disconnect": 11,
+        "duplicate": 11,
+        "loss_redelivery": 22,
+        "rate_limit": 11,
+        "reorder": 22,
+        "timeout_after_success": 11
+      },
+      "cases": [
+        {
+          "checks": 136,
+          "error": null,
+          "failures": [],
+          "input_sha256": "80683dd0d073c1cd45cba1af98ceaa486662cb205e837714b88c26b4a1d66484",
+          "run_id": "val-eac858fd04d1cd2c",
+          "scenario": "normal",
+          "seed": 264221324502380,
+          "status": "passed"
+        },
+        {
+          "checks": 102,
+          "error": null,
+          "failures": [],
+          "input_sha256": "305156f7b0e3e5172d1be40fd736a0b4d739896f1836e2e091208e09a837f302",
+          "run_id": "val-7740f994961ea1d9",
+          "scenario": "supplier_delay",
+          "seed": 264221324502381,
+          "status": "passed"
+        },
+        {
+          "checks": 50,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c497222bc21ee87454c6ba61339ea61e90fe9f0d6fa702320153ef1f0ae98364",
+          "run_id": "val-ecb8e2c284438989",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502382,
+          "status": "passed"
+        },
+        {
+          "checks": 80,
+          "error": null,
+          "failures": [],
+          "input_sha256": "2fbe988f09fa8e2a6668a5fd01416aa81ce078d5f804cbe943f31213f852c0c5",
+          "run_id": "val-2f44d0375ec6acc3",
+          "scenario": "transport_exception",
+          "seed": 264221324502383,
+          "status": "passed"
+        },
+        {
+          "checks": 108,
+          "error": null,
+          "failures": [],
+          "input_sha256": "d1f134aa6f2cf8c1a2b3d2c25290a23d363c8f04c037fd1dbc624c764cbf3055",
+          "run_id": "val-b1cdc139616b506f",
+          "scenario": "demand_spike",
+          "seed": 264221324502384,
+          "status": "passed"
+        },
+        {
+          "checks": 140,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3dcec429fede427ac0657a4f42cd14f72af261cd6a2cf2eaa8889933f9dfe385",
+          "run_id": "val-226c447171839b08",
+          "scenario": "slow_sales",
+          "seed": 264221324502385,
+          "status": "passed"
+        },
+        {
+          "checks": 144,
+          "error": null,
+          "failures": [],
+          "input_sha256": "cd5128a1fb6b3c754dd10a032e1198e24627e376c70b5fd6d93afee611e79eb5",
+          "run_id": "val-8315f14c9dbdc6d6",
+          "scenario": "returns_surge",
+          "seed": 264221324502386,
+          "status": "passed"
+        },
+        {
+          "checks": 94,
+          "error": null,
+          "failures": [],
+          "input_sha256": "39f2cc8c7676e43d2b0559737f426922740f6c8a2365b5cb3e8aaf9a073a37aa",
+          "run_id": "val-5c515cf74af8ba6b",
+          "scenario": "data_latency",
+          "seed": 264221324502387,
+          "status": "passed"
+        },
+        {
+          "checks": 134,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3fdc097a3a20f5f203e1f3a54a23b71e72b79de7d20017d9fdd99b64a0689153",
+          "run_id": "val-f4f2acbf763d781f",
+          "scenario": "mixed",
+          "seed": 264221324502388,
+          "status": "passed"
+        },
+        {
+          "checks": 54,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1cc895a22b7a9ef3700ebebb7a5181b8d17eec965af36757ed886d25cfb3ffd8",
+          "run_id": "val-0506a552f19d5f17",
+          "scenario": "normal",
+          "seed": 264221324502389,
+          "status": "passed"
+        },
+        {
+          "checks": 146,
+          "error": null,
+          "failures": [],
+          "input_sha256": "42c52ca7cc8dd09461169dfd463e870de5255fcfd1e9105a0badcd29c9efe08a",
+          "run_id": "val-cc4b7090e36c20e5",
+          "scenario": "supplier_delay",
+          "seed": 264221324502390,
+          "status": "passed"
+        },
+        {
+          "checks": 102,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7f4521f7517b6dcdbf7c7af090e2bdc3da0174908ef42cb87666b4aefaecaa9e",
+          "run_id": "val-92a3c02906c6f74b",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502391,
+          "status": "passed"
+        },
+        {
+          "checks": 70,
+          "error": null,
+          "failures": [],
+          "input_sha256": "d9f50ea725e3c7861e1849f2ff3d1e2f69c8b63499ad6a80373a1998999af968",
+          "run_id": "val-cc081f253b0b6c5c",
+          "scenario": "transport_exception",
+          "seed": 264221324502392,
+          "status": "passed"
+        },
+        {
+          "checks": 122,
+          "error": null,
+          "failures": [],
+          "input_sha256": "35e8a050bb60f5f94484bce96e626e370e25838e1758e9c959c4b9393990339b",
+          "run_id": "val-fc280f58d4da954f",
+          "scenario": "demand_spike",
+          "seed": 264221324502393,
+          "status": "passed"
+        },
+        {
+          "checks": 46,
+          "error": null,
+          "failures": [],
+          "input_sha256": "6056c389b53355f777e4306807ba5b8ca55cfc4c00ed34072f6f3f630836284c",
+          "run_id": "val-a7fa7fd3b69613ed",
+          "scenario": "slow_sales",
+          "seed": 264221324502394,
+          "status": "passed"
+        },
+        {
+          "checks": 66,
+          "error": null,
+          "failures": [],
+          "input_sha256": "0660342bbec165488bd72507c4f3567775ecc4c55fa77658def77d0114dcbbf6",
+          "run_id": "val-6d04373bf7a34701",
+          "scenario": "returns_surge",
+          "seed": 264221324502395,
+          "status": "passed"
+        },
+        {
+          "checks": 110,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1b92b28a4d6b90fb92b6f284ec2f6f0fc1f53e173b04059da111705406aa7dd9",
+          "run_id": "val-05b4de6e462b7b55",
+          "scenario": "data_latency",
+          "seed": 264221324502396,
+          "status": "passed"
+        },
+        {
+          "checks": 90,
+          "error": null,
+          "failures": [],
+          "input_sha256": "813440a35ebce418e8e0a24b8a917542b09c2d2384ca352c176474e229df6107",
+          "run_id": "val-d2ea1447b1dff0d4",
+          "scenario": "mixed",
+          "seed": 264221324502397,
+          "status": "passed"
+        },
+        {
+          "checks": 56,
+          "error": null,
+          "failures": [],
+          "input_sha256": "fb9086a76dca1bf8d56c44122ed21e7db63f4453fbade961abe3c5f9ecb438ed",
+          "run_id": "val-323d6fc51312ca26",
+          "scenario": "normal",
+          "seed": 264221324502398,
+          "status": "passed"
+        },
+        {
+          "checks": 46,
+          "error": null,
+          "failures": [],
+          "input_sha256": "8bb6922381f7f67141f376e307bf4016de7638b813fb4976ca4b6005f25fe93c",
+          "run_id": "val-384ae7c80818e607",
+          "scenario": "supplier_delay",
+          "seed": 264221324502399,
+          "status": "passed"
+        },
+        {
+          "checks": 90,
+          "error": null,
+          "failures": [],
+          "input_sha256": "c4bdd233be0245ce30990f2fcc968e0fee58781160194a665978a9f9a0927619",
+          "run_id": "val-af67a67b7a9520ab",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502400,
+          "status": "passed"
+        },
+        {
+          "checks": 46,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7d4a5535a7f19fcd9edec40c8ac21e9a3025c9703831b57494269c0f5cc14eeb",
+          "run_id": "val-c28eccfd7005a16f",
+          "scenario": "transport_exception",
+          "seed": 264221324502401,
+          "status": "passed"
+        },
+        {
+          "checks": 96,
+          "error": null,
+          "failures": [],
+          "input_sha256": "37d277b93c7437bd26cc0b2092ba7f13b89c8c3498903c162185a40b9c63529c",
+          "run_id": "val-c472d2590f89dcfe",
+          "scenario": "demand_spike",
+          "seed": 264221324502402,
+          "status": "passed"
+        },
+        {
+          "checks": 138,
+          "error": null,
+          "failures": [],
+          "input_sha256": "fbe26e2343f1f8358e99b4a760e0a71419e8567163bb58a4b5de1f4c19159a39",
+          "run_id": "val-e9bf665d5619d342",
+          "scenario": "slow_sales",
+          "seed": 264221324502403,
+          "status": "passed"
+        },
+        {
+          "checks": 146,
+          "error": null,
+          "failures": [],
+          "input_sha256": "04804a82b3151aa6ceb0f8f6336d6d8bf8e0b888ea6c6ac11460b228bd236b79",
+          "run_id": "val-c2239cc78e043e81",
+          "scenario": "returns_surge",
+          "seed": 264221324502404,
+          "status": "passed"
+        },
+        {
+          "checks": 104,
+          "error": null,
+          "failures": [],
+          "input_sha256": "4a603c31feba973304cd115b292b24bd60ae26da4d47e51d94133c30a4f903ef",
+          "run_id": "val-5a8e853d2df645b0",
+          "scenario": "data_latency",
+          "seed": 264221324502405,
+          "status": "passed"
+        },
+        {
+          "checks": 102,
+          "error": null,
+          "failures": [],
+          "input_sha256": "612c5f6f30dfaa8cba7c266ccfa8c677399220b9bb9a2e77e0b671aa548fdc31",
+          "run_id": "val-83d97de0369a0b65",
+          "scenario": "mixed",
+          "seed": 264221324502406,
+          "status": "passed"
+        },
+        {
+          "checks": 64,
+          "error": null,
+          "failures": [],
+          "input_sha256": "6cfe9dcbeb9143c3b4374c7c33aa317d8609effc829c70e9f5276d939dc3182b",
+          "run_id": "val-d6281d256d7113d1",
+          "scenario": "normal",
+          "seed": 264221324502407,
+          "status": "passed"
+        },
+        {
+          "checks": 86,
+          "error": null,
+          "failures": [],
+          "input_sha256": "714cff3ad618514b74b6645f70284918ae3ef6600df3aba547142fb001e8ef3f",
+          "run_id": "val-0dcb519a08900c0e",
+          "scenario": "supplier_delay",
+          "seed": 264221324502408,
+          "status": "passed"
+        },
+        {
+          "checks": 98,
+          "error": null,
+          "failures": [],
+          "input_sha256": "14176bda7e0aa41e12cc322527c0ae4b05cbd2391a07d0f90b913c065f65dcdf",
+          "run_id": "val-868e4429beb6eff2",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502409,
+          "status": "passed"
+        },
+        {
+          "checks": 120,
+          "error": null,
+          "failures": [],
+          "input_sha256": "8eac667665c53c4a2db434431c102352eb862aadd40b1db64588d0eebd867c78",
+          "run_id": "val-35b64852713f7925",
+          "scenario": "transport_exception",
+          "seed": 264221324502410,
+          "status": "passed"
+        },
+        {
+          "checks": 116,
+          "error": null,
+          "failures": [],
+          "input_sha256": "ce69f0e78e83402016d339c627f5f27eff0d4bec6c63d092269d64100ed94137",
+          "run_id": "val-324f02ec5ce28751",
+          "scenario": "demand_spike",
+          "seed": 264221324502411,
+          "status": "passed"
+        },
+        {
+          "checks": 106,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f01bfce029041b6d804512f9352a8f8228e4d7414d02d428739c45a9233d93e6",
+          "run_id": "val-c51fcf2866f31996",
+          "scenario": "slow_sales",
+          "seed": 264221324502412,
+          "status": "passed"
+        },
+        {
+          "checks": 100,
+          "error": null,
+          "failures": [],
+          "input_sha256": "a1a347171e25810c8742d7560f680cdc5d51ea0767697176d25aaaa70f7d0dcb",
+          "run_id": "val-341d91914cadeffe",
+          "scenario": "returns_surge",
+          "seed": 264221324502413,
+          "status": "passed"
+        },
+        {
+          "checks": 92,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9abf6300023a784058dbc80a95cb611e4de893c83b1cafc2bb77e0cbaa070fb3",
+          "run_id": "val-0bef134b7d6be076",
+          "scenario": "data_latency",
+          "seed": 264221324502414,
+          "status": "passed"
+        },
+        {
+          "checks": 96,
+          "error": null,
+          "failures": [],
+          "input_sha256": "dade2371ef718208ffd3457fe66375f55d0d4487dbdcc85a4b0ed2c011d5eefb",
+          "run_id": "val-252ad5733dd2b9f7",
+          "scenario": "mixed",
+          "seed": 264221324502415,
+          "status": "passed"
+        },
+        {
+          "checks": 64,
+          "error": null,
+          "failures": [],
+          "input_sha256": "fd70dd068ec9f3817863a0fb4261bc010a541c776e36620c0bd90774919140e9",
+          "run_id": "val-eed24e5a0e4ecf0c",
+          "scenario": "normal",
+          "seed": 264221324502416,
+          "status": "passed"
+        },
+        {
+          "checks": 100,
+          "error": null,
+          "failures": [],
+          "input_sha256": "ae089457f77525b0ee4d6a7f2cf042a333fa6f9f790194d3ecf0ab32c1988b90",
+          "run_id": "val-4a52886898b3cec0",
+          "scenario": "supplier_delay",
+          "seed": 264221324502417,
+          "status": "passed"
+        },
+        {
+          "checks": 80,
+          "error": null,
+          "failures": [],
+          "input_sha256": "a167739b79e6137773eee2267ca52a60c28ab869fdfa4900ca08d51eb2ed6e88",
+          "run_id": "val-0040d95cea621d3a",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502418,
+          "status": "passed"
+        },
+        {
+          "checks": 96,
+          "error": null,
+          "failures": [],
+          "input_sha256": "8ecaea9512dcfe4b771f50a322d0037109ba0d9a602464100ccbd9682bf0302a",
+          "run_id": "val-5599bc17579417a3",
+          "scenario": "transport_exception",
+          "seed": 264221324502419,
+          "status": "passed"
+        },
+        {
+          "checks": 70,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9eeef13e406db2038784e6c88e78cf1bb89126e68c610ff08f250713ef2dfb88",
+          "run_id": "val-e4de3fcc4ce4e833",
+          "scenario": "demand_spike",
+          "seed": 264221324502420,
+          "status": "passed"
+        },
+        {
+          "checks": 104,
+          "error": null,
+          "failures": [],
+          "input_sha256": "58d746fb7973d4d8ca1fb0360ccf1aa45b3fdf4077d0da7a93a1d22c08cc854b",
+          "run_id": "val-c58a5d4928bd55e2",
+          "scenario": "slow_sales",
+          "seed": 264221324502421,
+          "status": "passed"
+        },
+        {
+          "checks": 118,
+          "error": null,
+          "failures": [],
+          "input_sha256": "4c38ef01d2e45ad5ed829c5a324eb20c8a0eb0d36a2e988cc9d48435cc477fc5",
+          "run_id": "val-eb6f61decdc4a9b3",
+          "scenario": "returns_surge",
+          "seed": 264221324502422,
+          "status": "passed"
+        },
+        {
+          "checks": 116,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f93704cf80306019758dc47d83b26fb371899ae31cc560bfa0d99ea5735c3c8d",
+          "run_id": "val-ad82f9b943d0669d",
+          "scenario": "data_latency",
+          "seed": 264221324502423,
+          "status": "passed"
+        },
+        {
+          "checks": 156,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7845bd8652355c2b24ebe5d95afa840751c25e1902a5ef45dfda4e90be8fda8a",
+          "run_id": "val-2012137ab95a5c56",
+          "scenario": "mixed",
+          "seed": 264221324502424,
+          "status": "passed"
+        },
+        {
+          "checks": 70,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3fe21d3eab4f1f6f39984ff31dfbeefdc948aa37c7f3de9e271abd4cf236a40f",
+          "run_id": "val-00ef758222efdd3a",
+          "scenario": "normal",
+          "seed": 264221324502425,
+          "status": "passed"
+        },
+        {
+          "checks": 78,
+          "error": null,
+          "failures": [],
+          "input_sha256": "ef3418d3a1b6d6be0b338fc69926c997038add4a64ed5c33f937efbfb4f41083",
+          "run_id": "val-7c15e8fc230c7f58",
+          "scenario": "supplier_delay",
+          "seed": 264221324502426,
+          "status": "passed"
+        },
+        {
+          "checks": 80,
+          "error": null,
+          "failures": [],
+          "input_sha256": "aa2a141ed574e7fb606879d33b28f1470c214901c39ca992bc198c1e55bf4085",
+          "run_id": "val-58f4d1f4fc31dec7",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502427,
+          "status": "passed"
+        },
+        {
+          "checks": 52,
+          "error": null,
+          "failures": [],
+          "input_sha256": "71f0be38af31474c1f6afe5a1838a740d16404f5cb5bb85d6c0990272131bd0c",
+          "run_id": "val-2ca95e40b84142c7",
+          "scenario": "transport_exception",
+          "seed": 264221324502428,
+          "status": "passed"
+        },
+        {
+          "checks": 112,
+          "error": null,
+          "failures": [],
+          "input_sha256": "88ac744888c0706821023c1c18f6d72c39b00aecfe2b0116f832a53abf718ac8",
+          "run_id": "val-63f1873e0db94af9",
+          "scenario": "demand_spike",
+          "seed": 264221324502429,
+          "status": "passed"
+        },
+        {
+          "checks": 106,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9cb2711ab224d122238a793c71289d22815ae09814794193dfbaf141a54e4a0b",
+          "run_id": "val-50239264301a20f3",
+          "scenario": "slow_sales",
+          "seed": 264221324502430,
+          "status": "passed"
+        },
+        {
+          "checks": 126,
+          "error": null,
+          "failures": [],
+          "input_sha256": "13e3b3d500fa7d70efe4e21db90968dda4130164c58bf4b60b6dd48b577aba4d",
+          "run_id": "val-6e84d8e8d195e7a9",
+          "scenario": "returns_surge",
+          "seed": 264221324502431,
+          "status": "passed"
+        },
+        {
+          "checks": 124,
+          "error": null,
+          "failures": [],
+          "input_sha256": "4f323799f4a8e20859a8dd782b2dcaace80dc4dc3b98f3288430e1330b932503",
+          "run_id": "val-b30edb5892cd14f2",
+          "scenario": "data_latency",
+          "seed": 264221324502432,
+          "status": "passed"
+        },
+        {
+          "checks": 114,
+          "error": null,
+          "failures": [],
+          "input_sha256": "70a0970216acb5fa71c8b42f4443a0fbed339ee879280e8a0a3c1b5ebfc74a68",
+          "run_id": "val-6d73b50fb878adb0",
+          "scenario": "mixed",
+          "seed": 264221324502433,
+          "status": "passed"
+        },
+        {
+          "checks": 148,
+          "error": null,
+          "failures": [],
+          "input_sha256": "e6c135846fac046c02b17c3b77fe18acea4119379fa8740d8d0a57e36edf66b4",
+          "run_id": "val-5a4fbf570cb44daf",
+          "scenario": "normal",
+          "seed": 264221324502434,
+          "status": "passed"
+        },
+        {
+          "checks": 94,
+          "error": null,
+          "failures": [],
+          "input_sha256": "6edf839bebf61812e6ad7d3a21ee3853f0c9b65c821a15bda1514792c468bda8",
+          "run_id": "val-d0ea78aa578e9a3c",
+          "scenario": "supplier_delay",
+          "seed": 264221324502435,
+          "status": "passed"
+        },
+        {
+          "checks": 50,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1c221ceebba7248b4c992d25bdcc82f6eeaf5480bb1f29d448139fa5a22a2880",
+          "run_id": "val-f3c65a11498c72d0",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502436,
+          "status": "passed"
+        },
+        {
+          "checks": 150,
+          "error": null,
+          "failures": [],
+          "input_sha256": "6d72266db3faee7ee80f45b33e79a34c78642d1d29405f82882d99f0d1790d5c",
+          "run_id": "val-5983ac65ae57da88",
+          "scenario": "transport_exception",
+          "seed": 264221324502437,
+          "status": "passed"
+        },
+        {
+          "checks": 74,
+          "error": null,
+          "failures": [],
+          "input_sha256": "d6f2fef69a34261a9f22144814cff6653faf38eb7b24c7ebfd74c84ba5b5bda4",
+          "run_id": "val-2ce5dd23fa06359f",
+          "scenario": "demand_spike",
+          "seed": 264221324502438,
+          "status": "passed"
+        },
+        {
+          "checks": 42,
+          "error": null,
+          "failures": [],
+          "input_sha256": "e546e2d9052bf2f5278c108bb1669e2b479cb539d5212d118361b26c1fa0984d",
+          "run_id": "val-71d584345bc25110",
+          "scenario": "slow_sales",
+          "seed": 264221324502439,
+          "status": "passed"
+        },
+        {
+          "checks": 118,
+          "error": null,
+          "failures": [],
+          "input_sha256": "85c54fb54e7b31eb73ab57aabc6394c92d82a40fb83c7fd87b65feeb1736a39c",
+          "run_id": "val-54c56e53bceabb77",
+          "scenario": "returns_surge",
+          "seed": 264221324502440,
+          "status": "passed"
+        },
+        {
+          "checks": 58,
+          "error": null,
+          "failures": [],
+          "input_sha256": "123109ebee052d6939985981e8bf4bcd56f325493e19f1286cc9da059f161e18",
+          "run_id": "val-5e0df329e4ca7764",
+          "scenario": "data_latency",
+          "seed": 264221324502441,
+          "status": "passed"
+        },
+        {
+          "checks": 102,
+          "error": null,
+          "failures": [],
+          "input_sha256": "a5f75fcbbff643f3e6d0895234d82764c7ded7105007a629eb306d8bc6f21f64",
+          "run_id": "val-1443e420e9c1a25e",
+          "scenario": "mixed",
+          "seed": 264221324502442,
+          "status": "passed"
+        },
+        {
+          "checks": 102,
+          "error": null,
+          "failures": [],
+          "input_sha256": "dd029c65d37f86cce45ddf26acfae5a36449cf98312eda345c7bf06f948dbe82",
+          "run_id": "val-844a47106ca4ad4c",
+          "scenario": "normal",
+          "seed": 264221324502443,
+          "status": "passed"
+        },
+        {
+          "checks": 66,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f0b6a1650673c286716e500d653520f1614f747a6be1fa8ace5baad803a4ada0",
+          "run_id": "val-af03ec38a906ab74",
+          "scenario": "supplier_delay",
+          "seed": 264221324502444,
+          "status": "passed"
+        },
+        {
+          "checks": 124,
+          "error": null,
+          "failures": [],
+          "input_sha256": "71821924443c4fe5e28b62965c1e0d70352c7fa46c4063725ccc79351aa81023",
+          "run_id": "val-42902277b79301de",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502445,
+          "status": "passed"
+        },
+        {
+          "checks": 74,
+          "error": null,
+          "failures": [],
+          "input_sha256": "f8493bdc08c431e091dd9e61931ed76fe5696336f4e12ded63f98b769ff2cbd6",
+          "run_id": "val-57ca4d15951a1ebc",
+          "scenario": "transport_exception",
+          "seed": 264221324502446,
+          "status": "passed"
+        },
+        {
+          "checks": 102,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7abce395b9e710e172568083782bb7a043a77741177ff2ec35980b826678a10a",
+          "run_id": "val-f54c26fdf2f960b6",
+          "scenario": "demand_spike",
+          "seed": 264221324502447,
+          "status": "passed"
+        },
+        {
+          "checks": 98,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1b493028f928ecfb14383cf6ca93c94a3c5eb6d88cefb0b753c7dca2eefd002f",
+          "run_id": "val-049a15bde2f1db2a",
+          "scenario": "slow_sales",
+          "seed": 264221324502448,
+          "status": "passed"
+        },
+        {
+          "checks": 90,
+          "error": null,
+          "failures": [],
+          "input_sha256": "0abf91bea7b4faaa8d646247611dc08c4f442a011aa0ed8f46ea3823ec90a0e0",
+          "run_id": "val-16ce368f8c23dc27",
+          "scenario": "returns_surge",
+          "seed": 264221324502449,
+          "status": "passed"
+        },
+        {
+          "checks": 124,
+          "error": null,
+          "failures": [],
+          "input_sha256": "dc6362a4e85f8715494b4532990926c63ea2695f1e8f57801cc05d59ef750ede",
+          "run_id": "val-0264a3a407c165d0",
+          "scenario": "data_latency",
+          "seed": 264221324502450,
+          "status": "passed"
+        },
+        {
+          "checks": 82,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9f96a91d145d58f8e4b71ba3268bfc42198c10468519cf84d3cc00c8cecbcc46",
+          "run_id": "val-d67bb11da9453095",
+          "scenario": "mixed",
+          "seed": 264221324502451,
+          "status": "passed"
+        },
+        {
+          "checks": 72,
+          "error": null,
+          "failures": [],
+          "input_sha256": "2d0a1af123d7db324bad70d24f83c8c9d4d6afa6fc257ca0fef10f432eb1b2c2",
+          "run_id": "val-d4d6d8f4c8c5f04d",
+          "scenario": "normal",
+          "seed": 264221324502452,
+          "status": "passed"
+        },
+        {
+          "checks": 114,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3545843ecaf549e90d07a6fc68f14d14a429bdc9294cb629ca67714f30df8958",
+          "run_id": "val-1161a2cf154dfcf2",
+          "scenario": "supplier_delay",
+          "seed": 264221324502453,
+          "status": "passed"
+        },
+        {
+          "checks": 92,
+          "error": null,
+          "failures": [],
+          "input_sha256": "5c334cc30413d01a5130a1960ea73b594b618fccea31b4912a810ce1b61acc47",
+          "run_id": "val-fa025f7d920598c0",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502454,
+          "status": "passed"
+        },
+        {
+          "checks": 86,
+          "error": null,
+          "failures": [],
+          "input_sha256": "47cf428eaa2c56467a6b58acbf6143899e784e010eb755f0e324630cb78a1d72",
+          "run_id": "val-e603c1c6051df7c7",
+          "scenario": "transport_exception",
+          "seed": 264221324502455,
+          "status": "passed"
+        },
+        {
+          "checks": 86,
+          "error": null,
+          "failures": [],
+          "input_sha256": "0ba9d2cce2f1e35e10b22aafad268d29863e8ede3be0560e19dfa7b2e21bc375",
+          "run_id": "val-8727fed4d2bd5d5d",
+          "scenario": "demand_spike",
+          "seed": 264221324502456,
+          "status": "passed"
+        },
+        {
+          "checks": 84,
+          "error": null,
+          "failures": [],
+          "input_sha256": "a4dd8e13cdb76f6e1d9a4624a16e89e6476dbf84dfddd0d35af4af298b3e96b2",
+          "run_id": "val-eb0fd4674ac9fe90",
+          "scenario": "slow_sales",
+          "seed": 264221324502457,
+          "status": "passed"
+        },
+        {
+          "checks": 94,
+          "error": null,
+          "failures": [],
+          "input_sha256": "e952be548e22554ac7ebb1c7d71a37198a68bf32a74115b705ba49369a0b0a5f",
+          "run_id": "val-e7ec2dc5e31d74d3",
+          "scenario": "returns_surge",
+          "seed": 264221324502458,
+          "status": "passed"
+        },
+        {
+          "checks": 156,
+          "error": null,
+          "failures": [],
+          "input_sha256": "89fba83cd2caa03a385a7d87c95bb2fda72bc9044b95fde8008534ab0d08390c",
+          "run_id": "val-c1725b61879f20e7",
+          "scenario": "data_latency",
+          "seed": 264221324502459,
+          "status": "passed"
+        },
+        {
+          "checks": 90,
+          "error": null,
+          "failures": [],
+          "input_sha256": "dcb67473d29d91c037d4921ea1264416a6f1b958b0b5a328cd5e28fc0c8c0232",
+          "run_id": "val-2d4791703719fff7",
+          "scenario": "mixed",
+          "seed": 264221324502460,
+          "status": "passed"
+        },
+        {
+          "checks": 122,
+          "error": null,
+          "failures": [],
+          "input_sha256": "e970d4976c2a7e45a92cd9cd8bcf02ab9d14eed45c81917473bb0cf3e36b3a84",
+          "run_id": "val-45fe1ef878ec11d4",
+          "scenario": "normal",
+          "seed": 264221324502461,
+          "status": "passed"
+        },
+        {
+          "checks": 94,
+          "error": null,
+          "failures": [],
+          "input_sha256": "8cb6084ac3a60817e7d8c79da760e9666a89e3028209a42310bba60b31b23522",
+          "run_id": "val-cff49083de682e39",
+          "scenario": "supplier_delay",
+          "seed": 264221324502462,
+          "status": "passed"
+        },
+        {
+          "checks": 94,
+          "error": null,
+          "failures": [],
+          "input_sha256": "9db24f8fd307b1293fa7b65984a1d9d8016f2921b5531db09bed849ae0e01778",
+          "run_id": "val-70dfd3ae3095d733",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502463,
+          "status": "passed"
+        },
+        {
+          "checks": 58,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1784bde6905cee60a325695933e87c191d640d37f88ffc8f64314b1c9a145b72",
+          "run_id": "val-c90fbaa13115f43d",
+          "scenario": "transport_exception",
+          "seed": 264221324502464,
+          "status": "passed"
+        },
+        {
+          "checks": 66,
+          "error": null,
+          "failures": [],
+          "input_sha256": "5b404bb7bff0a25de3f946c0269f2eb0972918477ceca8895bb45e4cb74b75d3",
+          "run_id": "val-f2c53309134f5d1a",
+          "scenario": "demand_spike",
+          "seed": 264221324502465,
+          "status": "passed"
+        },
+        {
+          "checks": 46,
+          "error": null,
+          "failures": [],
+          "input_sha256": "6d4b57039975f376297c02d916a433222d13aa11c228fa814a2cc436cf4326e0",
+          "run_id": "val-4b17ad6a6ebf154d",
+          "scenario": "slow_sales",
+          "seed": 264221324502466,
+          "status": "passed"
+        },
+        {
+          "checks": 118,
+          "error": null,
+          "failures": [],
+          "input_sha256": "a9fdae13981a13959e2056fb206be804b3bcbb6cb7a3c9df08649bcd94b3423f",
+          "run_id": "val-d59e25aaecda119c",
+          "scenario": "returns_surge",
+          "seed": 264221324502467,
+          "status": "passed"
+        },
+        {
+          "checks": 98,
+          "error": null,
+          "failures": [],
+          "input_sha256": "4c7a363822dca9ba3b3e3b5d8dc3aae98c2127c3625119064cf937e2235235e3",
+          "run_id": "val-cf9272985f640b2b",
+          "scenario": "data_latency",
+          "seed": 264221324502468,
+          "status": "passed"
+        },
+        {
+          "checks": 62,
+          "error": null,
+          "failures": [],
+          "input_sha256": "fbd3540858772858af712fc6e8ffde1dcb6aae511dba0138a85d59c9bb9ac20f",
+          "run_id": "val-e159cfb3ea90a33b",
+          "scenario": "mixed",
+          "seed": 264221324502469,
+          "status": "passed"
+        },
+        {
+          "checks": 96,
+          "error": null,
+          "failures": [],
+          "input_sha256": "34ab0c8eaaec9ec889332f390ecee839ee5d0fbf0bfbe4931284782262d2be0d",
+          "run_id": "val-7d021cd77384799d",
+          "scenario": "normal",
+          "seed": 264221324502470,
+          "status": "passed"
+        },
+        {
+          "checks": 72,
+          "error": null,
+          "failures": [],
+          "input_sha256": "493ef3fdaf1df4c83b03dc3db5c6db625b854fdb38d95a67a77c6cc71a2234bd",
+          "run_id": "val-79b90acbed210c6c",
+          "scenario": "supplier_delay",
+          "seed": 264221324502471,
+          "status": "passed"
+        },
+        {
+          "checks": 80,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1d3bf629fcd39ad278571a320dbd04179cf09194b732708a6f3fd95e34f10e9d",
+          "run_id": "val-9631c23bd46cc9b7",
+          "scenario": "warehouse_congestion",
+          "seed": 264221324502472,
+          "status": "passed"
+        },
+        {
+          "checks": 104,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3c2ec5a3b4e5fe48a17196a24d6f0b33329fd6580395e5602abdf6e53aadf85b",
+          "run_id": "val-93f1540c796058dd",
+          "scenario": "transport_exception",
+          "seed": 264221324502473,
+          "status": "passed"
+        },
+        {
+          "checks": 150,
+          "error": null,
+          "failures": [],
+          "input_sha256": "6e4c224837c1e0a2b7ad63e34555633bb0d0c8b9f7ec0dc270932f0de70661c9",
+          "run_id": "val-7255ec8bfcc8b4b1",
+          "scenario": "demand_spike",
+          "seed": 264221324502474,
+          "status": "passed"
+        },
+        {
+          "checks": 92,
+          "error": null,
+          "failures": [],
+          "input_sha256": "260ef94d01a0fce6ecfce5b671a9b447665e1ad02dbf685caf246893459e1848",
+          "run_id": "val-eef505167ac71b59",
+          "scenario": "slow_sales",
+          "seed": 264221324502475,
+          "status": "passed"
+        },
+        {
+          "checks": 78,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1a29bea95e74ace91b3458ac0c1871df6c04f644463554c78b1dc62d67fd575b",
+          "run_id": "val-775c306f3697ebba",
+          "scenario": "returns_surge",
+          "seed": 264221324502476,
+          "status": "passed"
+        },
+        {
+          "checks": 138,
+          "error": null,
+          "failures": [],
+          "input_sha256": "7ecceb4fa25c61f2f12b59876b7ca426083cdd3f0308c324d70fc662a8cc6104",
+          "run_id": "val-2e37b8ac72d621a2",
+          "scenario": "data_latency",
+          "seed": 264221324502477,
+          "status": "passed"
+        },
+        {
+          "checks": 114,
+          "error": null,
+          "failures": [],
+          "input_sha256": "3dff690fb13d22c9c0bfa589aef259339f3bba8d8dfd5e70c0fd2d758f636d48",
+          "run_id": "val-e63c62de001b50db",
+          "scenario": "mixed",
+          "seed": 264221324502478,
+          "status": "passed"
+        },
+        {
+          "checks": 128,
+          "error": null,
+          "failures": [],
+          "input_sha256": "1475b99f9a2466d12565582e111c4b3a56d29a64bc7d5682675d2271147d5167",
+          "run_id": "val-6e458fe4ec70c995",
+          "scenario": "normal",
+          "seed": 264221324502479,
+          "status": "passed"
+        }
+      ],
+      "report_sha256": "3f28db33b85c8dfbef52c750939c09839dbfee2aeaae7fd81e279c755c1047c3",
+      "seed_range": [
+        264221324502380,
+        264221324502479
+      ]
+    }
+  },
+  "fixed_regression": {
+    "passed": 9,
+    "failed": 0,
+    "purpose": "regression",
+    "seeds": [
+      71008,
+      71005,
+      71009,
+      71001,
+      71007,
+      71006,
+      71002,
+      71004,
+      71003
+    ],
+    "checks": 1164,
+    "log_sha256": "2e4dde2db967c894f67a72846bfb494da53255e77a3d663e6f8b46c9aa297642"
+  },
+  "browser": {
+    "passed": true,
+    "run_id": "dev-96b99b6701b91216",
+    "desktop": true,
+    "mobile": true,
+    "mobile_overflow": false,
+    "report_export": true,
+    "reset_successor": true,
+    "logout": true,
+    "page_errors": [],
+    "desktop_sha256": "90e09763e4d689663d8c6ef668571c24d98322ca6995f9dea916c5f8dd9ab101",
+    "mobile_sha256": "36b4dbcaef4e28bbd8b0df0ee364dd29bd6bfde3f8a3a15d3863ddb543f0c88e"
+  },
+  "host": "macOS-27.0.1-arm64-arm-64bit",
+  "cpu_count": 8,
+  "code_sha256": "25db6a74904fece405b04607b0b972f1fc3f82fbb97083fe1bedbb57e45f5492",
+  "limits": [
+    "Managed process isolation validated on macOS only; unsupported hosts fail closed",
+    "M3 exception tasks, M4 order/Inbox workflows, M5 planning and M6 diagnosis are pending",
+    "No medium/large capacity claim, real data, real connectors or real model evaluation"
+  ]
+}

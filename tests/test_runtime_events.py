@@ -59,7 +59,7 @@ def test_changed_run_identity_on_same_database_is_rejected(tmp_path):
 def test_runtime_descriptor_never_exposes_database_or_key_path(env):
     engine,client=env
     descriptor=client.get('/api/v2/runtime').json()
-    assert descriptor['stage']=='M1' and descriptor['simulated_data_only']
+    assert descriptor['stage']=='M3' and descriptor['simulated_data_only']
     assert 'database_url' not in descriptor and 'model_key_path' not in descriptor
     assert str(engine.runtime_settings.data_dir) not in str(descriptor)
 

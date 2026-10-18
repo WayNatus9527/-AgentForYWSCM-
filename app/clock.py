@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta, timezone
 from threading import Lock
 import time
+import math
 
 
 def parse_timestamp(value):
@@ -34,7 +35,7 @@ class SystemBusinessClock:
 
 
 class VirtualBusinessClock:
-    """M1 clock primitive only; event scheduling/replay is an M2 responsibility."""
+    """Per-runtime clock; the simulator schedules every intervening event."""
     def __init__(self, start):
         self._current = parse_timestamp(start)
         self._lock = Lock()
@@ -44,7 +45,7 @@ class VirtualBusinessClock:
             return self._current.isoformat()
 
     def advance(self, *, seconds=0):
-        if not isinstance(seconds, (int, float)) or isinstance(seconds, bool) or seconds < 0:
+        if not isinstance(seconds, (int, float)) or isinstance(seconds, bool) or not math.isfinite(seconds) or seconds < 0:
             raise ValueError('Business time may advance only by a non-negative duration')
         with self._lock:
             self._current += timedelta(seconds=seconds)

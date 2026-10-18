@@ -69,7 +69,7 @@ def create_app(engine=None):
         from .migrations import migrate
         migrate(engine)
         yield
-    app = FastAPI(title='跨境电商供应链管理Agent助手',version='0.5.0',lifespan=lifespan)
+    app = FastAPI(title='跨境电商供应链管理Agent助手',version='0.7.0',lifespan=lifespan)
     app.state.engine = engine
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=['127.0.0.1','localhost','testserver'])
     attempts = defaultdict(deque)
@@ -247,7 +247,7 @@ def create_app(engine=None):
             writer.writerow([safe(x) for x in [p['code'],p['name'],p['spec'],whs[r['warehouse_id']]['name'],r['g'],r['q'],r['d'],r['r'],r['t'],r['h'],r['b'],r['available'],r['offline_available'],r['updated_at']]])
         return Response('\ufeff'+out.getvalue(),media_type='text/csv; charset=utf-8',headers={'Content-Disposition':'attachment; filename="inventory.csv"'})
     @app.get('/health')
-    def health():return {'status':'ok','version':'0.5.0','environment':'simulation-development','stage':'M1'}
+    def health():return {'status':'ok','version':'0.7.0','environment':'simulation-development','stage':'M3'}
     from .phase2 import install
     install(app,engine,actor_for,scope)
     from .phase3 import install as install_phase3
@@ -259,6 +259,8 @@ def create_app(engine=None):
     install_catalog(app,engine,actor_for)
     from .v2 import install as install_v2
     install_v2(app,engine,actor_for)
+    from .m3_api import install as install_m3
+    install_m3(app,engine,actor_for)
     static=Path(__file__).parent/'static'
     app.mount('/static',StaticFiles(directory=static),name='static')
     @app.get('/')

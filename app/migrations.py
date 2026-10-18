@@ -28,7 +28,7 @@ def migrate(engine):
     with db.write(engine, '__schema_migration__') as c:
         versions.create(c, checkfirst=True)
         applied = set(c.execute(select(versions.c.version)).scalars())
-        if applied - {1, 2, 3, 4, 5}:
+        if applied - {1, 2, 3, 4, 5, 6}:
             raise RuntimeError('Database schema is newer than this application')
         # Versions 1-4 remain exactly the existing additive table migrations.
         for version, name, tables in [(1,'phase_one_baseline',BASE),(2,'imports_purchases_approvals',PHASE2),(3,'transfers_returns_trial',PHASE3),(4,'agent_confirmed_actions',PHASE4)]:
@@ -43,4 +43,12 @@ def migrate(engine):
             events.install_append_only_guards(c)
             catalog.backfill_existing(c)
             c.execute(insert(versions).values(version=5, name='m1_runtime_catalog_inventory_events'))
+        if 6 not in applied:
+            from . import counting, exception_tasks, quality_control
+            from .m3_common import append_only
+            for module in (counting, exception_tasks, quality_control):
+                for table in module.TABLE_NAMES:
+                    db.metadata.tables[table].create(c, checkfirst=True)
+            append_only(c, ('stock_count_observations', 'stock_count_history', 'exception_task_history', 'quality_action_history'))
+            c.execute(insert(versions).values(version=6, name='m3_counts_quality_exceptions'))
         bind_runtime(engine, role='migration', connection=c)

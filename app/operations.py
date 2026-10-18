@@ -15,7 +15,10 @@ def quality_hold(c,tenant,warehouse,sku):
     return c.scalar(select(func.coalesce(func.sum(returns.c.quantity-returns.c.good-returns.c.bad),0)).where(returns.c.tenant_id==tenant,returns.c.warehouse_id==warehouse,returns.c.sku_id==sku,returns.c.kind=='customer'))
 
 def protect_pending_quality(c,actor,row):
-    if row['q']<quality_hold(c,actor['tenant_id'],row['warehouse_id'],row['sku_id']):w.fail('QUALITY_RESERVED','待验库存含未完成退货质检，请先在对应退货单处理')
+    from .quality_control import protected
+    q,d=protected(c,actor['tenant_id'],row['warehouse_id'],row['sku_id'])
+    if row['q']<quality_hold(c,actor['tenant_id'],row['warehouse_id'],row['sku_id'])+q or row['d']<d:
+        w.fail('QUALITY_RESERVED','库存含专属退货、检验批次或待处置数量，请在对应质量记录处理')
 
 def get_transfer(c,actor,tid,side=None):
     row=c.execute(select(transfers).where(transfers.c.id==tid,transfers.c.tenant_id==actor['tenant_id'])).mappings().first()
@@ -124,37 +127,78 @@ def discrepancy_review(engine,actor,cid,body,key):
 
 def return_create(engine,actor,body,key):
     require_role(actor,'admin','warehouse')
-    def apply(c):
+    from .quality_control import voucher, request_disposition, DEFAULT_DETAILS
+    if body['kind']=='supplier':
+        # Completed pre-M3 commands retain their original immutable reply. New
+        # supplier returns enter the reviewed disposition workflow below.
+        import hashlib,json
+        from .accounts import assert_current
+        with db.write(engine,actor['tenant_id']) as c:
+            assert_current(c,actor)
+            original=c.execute(select(db.documents).where(db.documents.c.id==body['original_id'],db.documents.c.tenant_id==actor['tenant_id'])).mappings().first()
+            if not original:w.fail('NOT_FOUND','原业务单据不存在',404)
+            get_warehouse(c,actor,original['warehouse_id'],True);get_sku(c,actor,original['sku_id'])
+            prior=c.execute(select(db.requests).where(db.requests.c.tenant_id==actor['tenant_id'],db.requests.c.actor_id==actor['id'],db.requests.c.key==key)).mappings().first()
+            digest=hashlib.sha256(json.dumps({'kind':'return.create','body':body},sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+            if prior and prior['fingerprint']==digest:return {**prior['response'],'replayed':True}
+        return request_disposition(engine,actor,dict(kind='supplier_return',original_id=body['original_id'],
+            reference=body['reference'],g=body['g'],q=body['q'],d=body['d'],expected_balance_version=body['expected_version'],
+            details=body.get('details') or {**DEFAULT_DETAILS,'opinion':body['reason']}),key)
+    def authorize(c):
         original=c.execute(select(db.documents).where(db.documents.c.id==body['original_id'],db.documents.c.tenant_id==actor['tenant_id'])).mappings().first()
         if not original:w.fail('NOT_FOUND','原业务单据不存在',404)
-        if original['kind'] not in (('sale',) if body['kind']=='customer' else ('receipt','purchase_receipt')):w.fail('INVALID_ORIGINAL','客户退货须关联交货单；退供应商须关联收货单')
-        if c.execute(select(w.reversals).where(w.reversals.c.original_id==original['id'])).first():w.fail('ALREADY_REVERSED','原单已冲正，不能据此退货')
-        n=body['quantity'] if body['kind']=='customer' else sum(body[f] for f in ('g','q','d'))
-        returned=c.scalar(select(func.coalesce(func.sum(returns.c.quantity),0)).where(returns.c.original_id==original['id'],returns.c.tenant_id==actor['tenant_id']))
-        if returned+n>original['quantity']:w.fail('OVER_RETURN','累计退货超过原单数量')
-        stock=w.balance(c,actor,original['warehouse_id'],original['sku_id'])
-        row=dict(id=uid(),tenant_id=actor['tenant_id'],warehouse_id=original['warehouse_id'],sku_id=original['sku_id'],kind=body['kind'],reference=body['reference'],original_id=original['id'],quantity=n,good=0,bad=0,status='awaiting_quality' if body['kind']=='customer' else 'completed',version=1,reason=body['reason'],actor_id=actor['id'],document_id=None,created_at=now())
-        c.execute(insert(returns).values(**row))
-        delta={'q':n} if body['kind']=='customer' else {f:-body[f] for f in ('g','q','d')}
-        doc=w.movement(c,actor,stock,delta,'customer_return' if body['kind']=='customer' else 'supplier_return',row['id'],body['reason'],body['expected_version'])
-        c.execute(update(returns).where(returns.c.id==row['id']).values(document_id=doc))
-        return {**row,'document_id':doc}
-    return w.command(engine,actor,'return.create',body,key,apply)
+        get_warehouse(c,actor,original['warehouse_id'],True);get_sku(c,actor,original['sku_id'])
+    return w.command(engine,actor,'return.create',body,key,lambda c:voucher(c,actor,'return.customer',body,lambda:apply_return(c,actor,body)),authorize=authorize)
 
+
+def apply_return(c,actor,body):
+    original=c.execute(select(db.documents).where(db.documents.c.id==body['original_id'],db.documents.c.tenant_id==actor['tenant_id'])).mappings().first()
+    if not original:w.fail('NOT_FOUND','原业务单据不存在',404)
+    if original['kind'] not in (('sale',) if body['kind']=='customer' else ('receipt','purchase_receipt')):w.fail('INVALID_ORIGINAL','客户退货须关联交货单；退供应商须关联收货单')
+    if c.execute(select(w.reversals).where(w.reversals.c.original_id==original['id'])).first():w.fail('ALREADY_REVERSED','原单已冲正，不能据此退货')
+    n=body['quantity'] if body['kind']=='customer' else sum(body[f] for f in ('g','q','d'))
+    returned=c.scalar(select(func.coalesce(func.sum(returns.c.quantity),0)).where(returns.c.original_id==original['id'],returns.c.tenant_id==actor['tenant_id']))
+    if returned+n>original['quantity']:w.fail('OVER_RETURN','累计退货超过原单数量')
+    stock=w.balance(c,actor,original['warehouse_id'],original['sku_id'])
+    row=dict(id=uid(),tenant_id=actor['tenant_id'],warehouse_id=original['warehouse_id'],sku_id=original['sku_id'],kind=body['kind'],reference=body['reference'],original_id=original['id'],quantity=n,good=0,bad=0,status='awaiting_quality' if body['kind']=='customer' else 'completed',version=1,reason=body['reason'],actor_id=actor['id'],document_id=None,created_at=now())
+    c.execute(insert(returns).values(**row))
+    delta={'q':n} if body['kind']=='customer' else {f:-body[f] for f in ('g','q','d')}
+    doc=w.movement(c,actor,stock,delta,'customer_return' if body['kind']=='customer' else 'supplier_return',row['id'],body['reason'],body['expected_version'])
+    c.execute(update(returns).where(returns.c.id==row['id']).values(document_id=doc))
+    result={**row,'document_id':doc}
+    from .quality_control import remember
+    remember(c,actor,'return',result,body)
+    return result
 def inspect_quality(engine,actor,body,key):
     require_role(actor,'admin','warehouse')
-    def apply(c):
-        n=body['good']+body['bad'];rid=body.get('return_id')
-        if rid:
-            ret=c.execute(select(returns).where(returns.c.id==rid,returns.c.tenant_id==actor['tenant_id'])).mappings().first()
+    from .quality_control import voucher
+    def authorize(c):
+        if body.get('return_id'):
+            ret=c.execute(select(returns).where(returns.c.id==body['return_id'],returns.c.tenant_id==actor['tenant_id'])).mappings().first()
             if not ret:w.fail('NOT_FOUND','退货单不存在',404)
-            if ret['kind']!='customer' or n>ret['quantity']-ret['good']-ret['bad']:w.fail('OVER_INSPECTION','质检数量超过该退货单剩余待验量')
-            warehouse_id,sku_id=ret['warehouse_id'],ret['sku_id']
-            if ret['version']!=body['return_version']:w.fail('VERSION_CONFLICT','退货单已变化')
-            c.execute(update(returns).where(returns.c.id==rid).values(good=ret['good']+body['good'],bad=ret['bad']+body['bad'],version=ret['version']+1,status='completed' if n==ret['quantity']-ret['good']-ret['bad'] else 'awaiting_quality'))
-        else:warehouse_id,sku_id=body['warehouse_id'],body['sku_id']
-        stock=w.balance(c,actor,warehouse_id,sku_id)
-        doc=w.movement(c,actor,stock,{'q':-n,'g':body['good'],'d':body['bad']},'quality',rid or body['reference'],body['reason'],body['expected_version'])
-        row=dict(id=uid(),tenant_id=actor['tenant_id'],warehouse_id=warehouse_id,sku_id=sku_id,return_id=rid,reference=body['reference'],good=body['good'],bad=body['bad'],reason=body['reason'],document_id=doc,actor_id=actor['id'],created_at=now())
-        c.execute(insert(quality).values(**row));return row
-    return w.command(engine,actor,'quality.inspect',body,key,apply)
+            get_warehouse(c,actor,ret['warehouse_id'],True);get_sku(c,actor,ret['sku_id'])
+        else:
+            get_warehouse(c,actor,body['warehouse_id'],True);get_sku(c,actor,body['sku_id'])
+    return w.command(engine,actor,'quality.inspect',body,key,lambda c:voucher(c,actor,'quality.combined',body,lambda:apply_quality(c,actor,body)),authorize=authorize)
+
+
+def apply_quality(c,actor,body):
+    n=body['good']+body['bad'];rid=body.get('return_id')
+    if rid:
+        from .quality_control import sessions
+        if c.execute(select(sessions.c.id).where(sessions.c.return_id==rid,sessions.c.tenant_id==actor['tenant_id'],sessions.c.status=='started')).first():
+            w.fail('QUALITY_RESERVED','此退货已有进行中的检验批次，请在该批次完成检验')
+        ret=c.execute(select(returns).where(returns.c.id==rid,returns.c.tenant_id==actor['tenant_id'])).mappings().first()
+        if not ret:w.fail('NOT_FOUND','退货单不存在',404)
+        if ret['kind']!='customer' or n>ret['quantity']-ret['good']-ret['bad']:w.fail('OVER_INSPECTION','质检数量超过该退货单剩余待验量')
+        warehouse_id,sku_id=ret['warehouse_id'],ret['sku_id']
+        if ret['version']!=body['return_version']:w.fail('VERSION_CONFLICT','退货单已变化')
+        c.execute(update(returns).where(returns.c.id==rid).values(good=ret['good']+body['good'],bad=ret['bad']+body['bad'],version=ret['version']+1,status='completed' if n==ret['quantity']-ret['good']-ret['bad'] else 'awaiting_quality'))
+    else:warehouse_id,sku_id=body['warehouse_id'],body['sku_id']
+    stock=w.balance(c,actor,warehouse_id,sku_id)
+    doc=w.movement(c,actor,stock,{'q':-n,'g':body['good'],'d':body['bad']},'quality',rid or body['reference'],body['reason'],body['expected_version'])
+    row=dict(id=uid(),tenant_id=actor['tenant_id'],warehouse_id=warehouse_id,sku_id=sku_id,return_id=rid,reference=body['reference'],good=body['good'],bad=body['bad'],reason=body['reason'],document_id=doc,actor_id=actor['id'],created_at=now())
+    c.execute(insert(quality).values(**row))
+    from .quality_control import remember
+    remember(c,actor,'quality',row,body)
+    return row

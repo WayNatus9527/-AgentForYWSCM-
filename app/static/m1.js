@@ -15,7 +15,7 @@ async function m1Write(path,body,method='POST',original=null){
  catch(e){if(!e.unknown&&e.code!=='UNAUTHENTICATED')sessionStorage.removeItem(storage);throw e}
  finally{state.busy=false}
 }
-function m1Banner(){return (m1.error?`<div class="notice"><p>新版资料读取失败：${esc(m1.error)}。请刷新后再操作。</p><button class="secondary-button" id="m1-refresh">重试读取</button></div>`:'')+(m1Pending()?'<div class="notice"><p>一笔基础资料操作结果未确认，原始内容和请求编号已保留。</p><button class="secondary-button" id="m1-retry">重试原请求</button></div>':'')}
+function m1Banner(){return (m1.error?`<div class="notice"><p>新版资料读取失败：${esc(m1.error)}。请刷新后再操作。</p><button class="secondary-button" id="m1-refresh">重试读取</button></div>`:'')+(m1Pending()?'<div class="notice"><p>一笔业务操作结果未确认，原始内容和请求编号已保留。</p><button class="secondary-button" id="m1-retry">重试原请求</button></div>':'')}
 function quantityByUnit(rows,amount){
  const totals=new Map();
  for(const row of rows){const value=amount(row);if(value==null)continue;const unit=sku(row.sku_id).unit||'未定义单位';totals.set(unit,(totals.get(unit)||0)+Number(value))}

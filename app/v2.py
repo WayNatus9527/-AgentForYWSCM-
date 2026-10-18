@@ -99,7 +99,7 @@ class Cancel(Withdraw):
 def install(app, engine, actor_for):
     @app.get('/api/v2/runtime')
     def runtime():
-        return {**runtime_descriptor(engine), 'version': '0.5.0', 'stage': 'M1',
+        return {**runtime_descriptor(engine), 'version': '0.7.0', 'stage': 'M3',
                 'simulated_data_only': True, 'external_connectors': 'not_connected'}
 
     @app.post('/api/v2/inventory/receipts')

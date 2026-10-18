@@ -13,3 +13,6 @@ textarea{width:100%;padding:12px;border:1px solid #d9e2dc;border-radius:8px;font
 
 /* Product name uses two lines so the complete name fits narrow navigation. */
 .brand .brand-sub{font-size:10px;letter-spacing:.3px;white-space:nowrap}@media(max-width:760px){.brand .brand-sub{display:block}}
+
+/* M3 evidence and long document identifiers stay within each card. */
+.m3-history,.m3-disposition{overflow-wrap:anywhere}.m3-disposition{padding:16px 0;border-bottom:1px solid var(--line,#e2e8e4)}.form-card>details{margin-top:16px}.form-card .action-buttons{flex-wrap:wrap}.form-card .card-head{gap:12px;flex-wrap:wrap}.sidebar{overflow-y:auto}
