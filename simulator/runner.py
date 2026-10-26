@@ -54,10 +54,10 @@ def signature(outcome):
 
 def run(control, run_id, *, until=None):
     _, dispatch_manifest=control.verify(run_id)
-    if dispatch_manifest.get('acceptance_stage')=='M3':
-        if until is not None:raise ValueError('M3 acceptance runs complete workflows; time slicing is available for M2 scenarios')
+    if dispatch_manifest.get('acceptance_stage') in ('M3','M4','M5','M6'):
+        if until is not None:raise ValueError('M3/M4/M5/M6 acceptance runs complete workflows; time slicing is available for M2 scenarios')
         from .m3_validation import run as m3_run
-        return m3_run(control,run_id)
+        return m3_run(control,run_id,stage=dispatch_manifest['acceptance_stage'])
     started=time.monotonic()
     with control.lock(run_id) as lock_fd:
         path,manifest=control.verify(run_id)
@@ -173,7 +173,7 @@ def run(control, run_id, *, until=None):
                              'host':platform.platform(),'cpu_count':os.cpu_count(),
                              'scope':'generated scale only; includes controlled retries and process restart'},
                 bottleneck_comparison={'status':'not_implemented_until_M6','truth_available':True},
-                known_limits=['M3 exception tasks, M4 Inbox/order lifecycle and M6 diagnosis remain future milestones',
+                known_limits=['This M2 suite covers legacy event workloads; M3/M4/M5 workflow evidence is separate and M6 diagnosis remains future work',
                               'Fault transport is deterministic simulation; no real external service calls'],
                 failures=assertions['failures'])
             write_json(path/'reports/snapshot.json',actual)
@@ -194,8 +194,8 @@ def run(control, run_id, *, until=None):
 def replay(control, source_id):
     with control.lock(source_id):
         path,manifest=control.verify(source_id)
-        if manifest.get('acceptance_stage')=='M3':
-            raise ValueError('M3 acceptance uses fresh reset successors; captured delivery replay is available for M2 scenarios')
+        if manifest.get('acceptance_stage') in ('M3','M4','M5','M6'):
+            raise ValueError('M3/M4/M5/M6 acceptance uses fresh reset successors; captured delivery replay is available for M2 scenarios')
         records=trace_records(path/'trace.jsonl')
         intents={}; attempts=[]
         for row in records:

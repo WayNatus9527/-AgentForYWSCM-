@@ -27,7 +27,7 @@ async function m1Load(){
   m1.runtime=await api('/v2/runtime');
   const r=m1.runtime,label=({development:'开发',dev:'开发',test:'测试',validation:'验证',regression:'回归',simulation:'模拟',demo:'演示'})[r.runtime_mode]||r.runtime_mode;
   $('#runtime-badge').textContent=`模拟环境 · ${label}`;$('#runtime-mode').textContent=`模拟${label}环境`;$('#runtime-run').textContent=`运行标识 ${r.run_id}`;
-  const results=await Promise.allSettled([m1GetCatalog('skus'),m1GetCatalog('warehouses'),state.user.role==='cashier'?Promise.resolve():m1GetCatalog('suppliers'),state.user.role==='cashier'?Promise.resolve():m1GetCatalog('mappings'),m1GetInventory()]);
+  const results=await Promise.allSettled([m1GetCatalog('skus'),m1GetCatalog('warehouses'),!['admin','warehouse'].includes(state.user.role)?Promise.resolve():m1GetCatalog('suppliers'),!['admin','warehouse'].includes(state.user.role)?Promise.resolve():m1GetCatalog('mappings'),m1GetInventory()]);
   const failure=results.find(r=>r.status==='rejected');if(failure)throw failure.reason;
  }catch(e){m1.error=e.message}
 }

@@ -130,69 +130,81 @@ def authorize(engine, actor, body, key):
     return inv.command(engine, actor, 'commitment.authorize', body, key, apply)
 
 
+def reserve_in_transaction(c, actor, grant_id, body):
+    grant = _get(c, grants, actor, grant_id)
+    digest = _digest('reserve', {**body, 'grant_id': grant_id})
+    prior = _previous(c, actor, grant['source_account'], body['action_id'], digest)
+    if prior:
+        return prior
+    old = c.execute(select(reservations.c.id).where(
+        reservations.c.tenant_id == actor['tenant_id'],
+        reservations.c.source_account == grant['source_account'],
+        reservations.c.order_id == body['order_id'], reservations.c.line_id == body['line_id'])).first()
+    if old:
+        raise BusinessError('ORDER_LINE_EXISTS', '此来源订单行已建立占用，请处理原记录')
+    _version(grant, body['grant_version'])
+    n = body['quantity']
+    if n > grant['free']:
+        raise BusinessError('INSUFFICIENT_QUOTA', '订单数量超过此来源剩余额度')
+    stock = inv.load_balance(c, actor, grant['warehouse_id'], grant['sku_id'])
+    row = dict(id=uid(), tenant_id=actor['tenant_id'], grant_id=grant_id,
+               warehouse_id=grant['warehouse_id'], sku_id=grant['sku_id'],
+               source_account=grant['source_account'], order_id=body['order_id'], line_id=body['line_id'],
+               quantity=n, reserved=n, cancelled=0, fulfilled=0, version=1,
+               fingerprint=digest, created_at=now())
+    c.execute(insert(reservations).values(**row))
+    grant.update(free=grant['free'] - n, version=grant['version'] + 1)
+    c.execute(update(grants).where(grants.c.id == grant_id).values(**grant))
+    doc = inv.movement(c, actor, stock, {'online': -n, 'r': n}, 'quota_to_order',
+                       row['id'], body['order_id'] + '/' + body['line_id'], body['expected_version'],
+                       business_reference=body['action_id'])
+    return _record(c, actor, grant, 'reserve', body, digest, doc, stock, row)
+
+
 def reserve(engine, actor, grant_id, body, key):
     require_role(actor, 'admin', 'warehouse')
     positive(body['quantity']);text(body['order_id']);text(body['line_id']);text(body['action_id'])
     def apply(c):
-        grant = _get(c, grants, actor, grant_id)
-        digest = _digest('reserve', {**body, 'grant_id': grant_id})
-        prior = _previous(c, actor, grant['source_account'], body['action_id'], digest)
-        if prior:
-            return prior
-        old = c.execute(select(reservations.c.id).where(
-            reservations.c.tenant_id == actor['tenant_id'],
-            reservations.c.source_account == grant['source_account'],
-            reservations.c.order_id == body['order_id'], reservations.c.line_id == body['line_id'])).first()
-        if old:
-            raise BusinessError('ORDER_LINE_EXISTS', '此来源订单行已建立占用，请处理原记录')
-        _version(grant, body['grant_version'])
-        n = body['quantity']
-        if n > grant['free']:
-            raise BusinessError('INSUFFICIENT_QUOTA', '订单数量超过此来源剩余额度')
-        stock = inv.load_balance(c, actor, grant['warehouse_id'], grant['sku_id'])
-        row = dict(id=uid(), tenant_id=actor['tenant_id'], grant_id=grant_id,
-                   warehouse_id=grant['warehouse_id'], sku_id=grant['sku_id'],
-                   source_account=grant['source_account'], order_id=body['order_id'], line_id=body['line_id'],
-                   quantity=n, reserved=n, cancelled=0, fulfilled=0, version=1,
-                   fingerprint=digest, created_at=now())
-        c.execute(insert(reservations).values(**row))
-        grant.update(free=grant['free'] - n, version=grant['version'] + 1)
-        c.execute(update(grants).where(grants.c.id == grant_id).values(**grant))
-        doc = inv.movement(c, actor, stock, {'online': -n, 'r': n}, 'quota_to_order',
-                           row['id'], body['order_id'] + '/' + body['line_id'], body['expected_version'],
-                           business_reference=body['action_id'])
-        return _record(c, actor, grant, 'reserve', body, digest, doc, stock, row)
+        return reserve_in_transaction(c, actor, grant_id, body)
     return inv.command(engine, actor, 'commitment.reserve:' + grant_id, body, key, apply)
+
+
+def cancel_in_transaction(c, actor, reservation_id, body, *, managed=False):
+    if not managed:
+        from .m4_schema import batches
+        if c.execute(select(batches.c.id).where(batches.c.commitment_id == reservation_id)).first():
+            raise BusinessError('MANAGED_COMMITMENT', '此占用由订单履约管理，请从订单取消未发数量')
+    row = _get(c, reservations, actor, reservation_id)
+    grant = _get(c, grants, actor, row['grant_id'])
+    digest = _digest('cancel', {**body, 'reservation_id': reservation_id})
+    prior = _previous(c, actor, grant['source_account'], body['action_id'], digest)
+    if prior:
+        return prior
+    _version(grant, body['grant_version']);_version(row, body['reservation_version'])
+    n = body['quantity']
+    if n > row['reserved']:
+        raise BusinessError('OVER_CANCELLATION', '只能取消尚未履约和未取消的占用量')
+    stock = inv.load_balance(c, actor, grant['warehouse_id'], grant['sku_id'])
+    delta = {'r': -n}
+    if grant['restore_on_cancel']:
+        delta['online'] = n
+        grant['free'] += n
+    else:
+        grant['withdrawn'] += n
+    grant['version'] += 1
+    row.update(reserved=row['reserved'] - n, cancelled=row['cancelled'] + n, version=row['version'] + 1)
+    c.execute(update(grants).where(grants.c.id == grant['id']).values(**grant))
+    c.execute(update(reservations).where(reservations.c.id == row['id']).values(**row))
+    doc = inv.movement(c, actor, stock, delta, 'order_cancel', row['id'], body['reason'],
+                       body['expected_version'], business_reference=body['action_id'])
+    return _record(c, actor, grant, 'cancel', body, digest, doc, stock, row)
 
 
 def cancel(engine, actor, reservation_id, body, key):
     require_role(actor, 'admin', 'warehouse')
     positive(body['quantity']);text(body['action_id']);text(body['reason'])
     def apply(c):
-        row = _get(c, reservations, actor, reservation_id)
-        grant = _get(c, grants, actor, row['grant_id'])
-        digest = _digest('cancel', {**body, 'reservation_id': reservation_id})
-        prior = _previous(c, actor, grant['source_account'], body['action_id'], digest)
-        if prior:
-            return prior
-        _version(grant, body['grant_version']);_version(row, body['reservation_version'])
-        n = body['quantity']
-        if n > row['reserved']:
-            raise BusinessError('OVER_CANCELLATION', '只能取消尚未履约和未取消的占用量')
-        stock = inv.load_balance(c, actor, grant['warehouse_id'], grant['sku_id'])
-        delta = {'r': -n}
-        if grant['restore_on_cancel']:
-            delta['online'] = n
-            grant['free'] += n
-        else:
-            grant['withdrawn'] += n
-        grant['version'] += 1
-        row.update(reserved=row['reserved'] - n, cancelled=row['cancelled'] + n, version=row['version'] + 1)
-        c.execute(update(grants).where(grants.c.id == grant['id']).values(**grant))
-        c.execute(update(reservations).where(reservations.c.id == row['id']).values(**row))
-        doc = inv.movement(c, actor, stock, delta, 'order_cancel', row['id'], body['reason'],
-                           body['expected_version'], business_reference=body['action_id'])
-        return _record(c, actor, grant, 'cancel', body, digest, doc, stock, row)
+        return cancel_in_transaction(c, actor, reservation_id, body)
     return inv.command(engine, actor, 'commitment.cancel:' + reservation_id, body, key, apply)
 
 

@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from sqlalchemy import select, func
 from . import inventory, commitments, events, accounts
 from .config import runtime_descriptor
-from .clock import parse_timestamp
+from .clock import parse_timestamp, business_now
 from .domain import get_warehouse, get_sku, require_role
 
 Text = Annotated[str, Field(min_length=1, max_length=120)]
@@ -99,8 +99,8 @@ class Cancel(Withdraw):
 def install(app, engine, actor_for):
     @app.get('/api/v2/runtime')
     def runtime():
-        return {**runtime_descriptor(engine), 'version': '0.7.0', 'stage': 'M3',
-                'simulated_data_only': True, 'external_connectors': 'not_connected'}
+        return {**runtime_descriptor(engine), 'version': '0.10.1', 'stage': 'M6',
+                'simulated_data_only': True, 'external_connectors': 'not_connected', 'business_time':business_now(engine)}
 
     @app.post('/api/v2/inventory/receipts')
     def receipt(body: Receipt, request: Request, idempotency_key: Key):

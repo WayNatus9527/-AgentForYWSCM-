@@ -137,7 +137,8 @@ class Control:
         if row['backend']=='postgresql': self.pg().verify(run_id,runtime['database_url'])
         return path,manifest
 
-    def create(self, config, *, run_id=None, backend='sqlite', parent_id=None, replay_schedule=None, m3=False):
+    def create(self, config, *, run_id=None, backend='sqlite', parent_id=None, replay_schedule=None, m3=False, m4=False, m5=False, m6=False):
+        if sum((m3,m4,m5,m6))>1: raise ValueError('Choose one acceptance stage')
         config=Scenario.model_validate(config) if isinstance(config,dict) else config
         if backend not in ('sqlite','postgresql'): raise ValueError('Unsupported backend')
         run_id=run_id or f'{config.purpose[:3]}-{secrets.token_hex(8)}'
@@ -152,6 +153,19 @@ class Control:
                 from .m3_data import generate as m3_generate, expected as m3_expected
                 dataset['m3']=m3_generate(config.seed)
                 truth['m3_expected']=m3_expected(dataset['masters'],dataset['m3'])
+            if m4:
+                from .m4_data import generate as m4_generate, expected as m4_expected
+                dataset['m4']=m4_generate(config.seed)
+                truth['m4_expected']=m4_expected(dataset['masters'],dataset['m4'])
+            if m5:
+                from .m5_data import generate as m5_generate, expected as m5_expected
+                dataset['m5']=m5_generate(config.seed)
+                truth['m5_expected']=m5_expected(dataset['masters'],dataset['m5'])
+            if m6:
+                from .m6_data import generate as m6_generate, expected as m6_expected, diagnosis
+                dataset['m6']=m6_generate(config.seed)
+                truth['m6_expected']=m6_expected(dataset['masters'],dataset['m6'])
+                truth['m6_diagnosis']=diagnosis(dataset['m6'])
             path=self.root/'runs'/run_id; path.mkdir(mode=0o700)
             for directory in ('business','private','reports','business/tmp','business/attachments','business/backups'):
                 (path/directory).mkdir(mode=0o700)
@@ -178,6 +192,9 @@ class Control:
                 created_at=datetime.now(timezone.utc).isoformat(),parent_run_id=parent_id,
                 nondeterministic_fields=['run_id','database_fingerprint','created_at','business UUIDs','real timestamps','performance'])
             if m3:manifest['acceptance_stage']='M3'
+            if m4:manifest['acceptance_stage']='M4'
+            if m5:manifest['acceptance_stage']='M5'
+            if m6:manifest['acceptance_stage']='M6'
             write_json(path/'manifest.json',manifest,immutable=True)
             with self.connect() as c:
                 c.execute('INSERT INTO runs VALUES(?,?,?,?,?,?,?,0,?,?)',
@@ -190,7 +207,7 @@ class Control:
             path,manifest=self.verify(run_id,fingerprint,check_code=False)
             self.archive(run_id,path,manifest)
             # New identity means old workers/tasks cannot target a newly empty DB.
-            created=self.create(manifest['config'],backend=manifest['backend'],parent_id=run_id,m3=manifest.get('acceptance_stage')=='M3')
+            created=self.create(manifest['config'],backend=manifest['backend'],parent_id=run_id,m3=manifest.get('acceptance_stage')=='M3',m4=manifest.get('acceptance_stage')=='M4',m5=manifest.get('acceptance_stage')=='M5',m6=manifest.get('acceptance_stage')=='M6')
             self.audit(run_id,'reset_to_successor',created['run_id'])
             return created
 

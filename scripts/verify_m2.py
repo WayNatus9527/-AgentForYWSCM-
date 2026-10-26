@@ -17,6 +17,12 @@ def main():
     parser.add_argument('--mode',choices=('smoke','batch','pytest','postgres-suite','regression'),default='smoke')
     parser.add_argument('--count',type=int,default=100)
     parser.add_argument('--m3-count',type=int,default=0)
+    parser.add_argument('--m4-count',type=int,default=0)
+    parser.add_argument('--m4-seed-start',type=int)
+    parser.add_argument('--m5-count',type=int,default=0)
+    parser.add_argument('--m5-seed-start',type=int)
+    parser.add_argument('--m6-count',type=int,default=0)
+    parser.add_argument('--m6-seed-start',type=int)
     parser.add_argument('--backend',choices=('sqlite','postgresql'),default='sqlite')
     parser.add_argument('--pg-url-file')
     parser.add_argument('--test-path',default='tests/test_m2_simulator.py')
@@ -54,7 +60,23 @@ def main():
             if args.m3_count:
                 from simulator.m3_validation import batch as m3_batch
                 m3_report=m3_batch(control,args.m3_count,backend='postgresql')
-                print(canonical(m3_report));raise SystemExit(bool(m3_report['failed']))
+                print(canonical(m3_report))
+                if m3_report['failed']:raise SystemExit(1)
+            if args.m4_count:
+                from simulator.m3_validation import batch as workflow_batch
+                m4_report=workflow_batch(control,args.m4_count,backend='postgresql',stage='M4',seed_start=args.m4_seed_start)
+                print(canonical(m4_report))
+                if m4_report['failed']:raise SystemExit(1)
+            if args.m5_count:
+                from simulator.m3_validation import batch as workflow_batch
+                report=workflow_batch(control,args.m5_count,backend='postgresql',stage='M5',seed_start=args.m5_seed_start)
+                print(canonical(report))
+                if report['failed']:raise SystemExit(1)
+            if args.m6_count:
+                from simulator.m3_validation import batch as workflow_batch
+                report=workflow_batch(control,args.m6_count,backend='postgresql',stage='M6',seed_start=args.m6_seed_start)
+                print(canonical(report))
+                if report['failed']:raise SystemExit(1)
         return
     if args.mode=='pytest':
         import pytest

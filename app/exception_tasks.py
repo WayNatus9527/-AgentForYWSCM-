@@ -25,12 +25,26 @@ TABLE_NAMES=tuple(x.name for x in (tasks,history,reminders))
 def linked(c,actor,body):
     scope(c,actor,body['warehouse_id'],body['sku_id'])
     from . import counting, operations, quality_control
-    tables={'stock_count':counting.counts,'return':operations.returns,'inspection':quality_control.sessions,'stock_document':db.documents}
+    from . import m4_schema, m5_schema, m6_schema, events
+    tables={'stock_count':counting.counts,'return':operations.returns,'inspection':quality_control.sessions,'stock_document':db.documents,
+        'sales_order':m4_schema.orders,'connector_inbox':m4_schema.inbox,'connector_outbox':m4_schema.outbox,'reconciliation':m4_schema.reconciliations,
+        'supply_line':m5_schema.lines,'supply_batch':m5_schema.batches,'analysis_row':m6_schema.rows,'business_event':events.business_events}
     table=tables.get(body['object_type'])
     if table is None: fail('INVALID_LINK','不支持此业务对象类型',422)
     row=c.execute(select(table).where(table.c.id==body['object_id'],table.c.tenant_id==actor['tenant_id'])).mappings().first()
     if not row: fail('NOT_FOUND','关联业务对象不存在或未授权',404)
-    if body['object_type']=='stock_count':
+    if body['object_type']=='analysis_row':
+        from .review import row as analysis_row
+        analysis_row(c,actor,body['object_id'])
+    if body['object_type']=='business_event':
+        from .review import event_scope
+        event_scope(c,actor,body['object_id'])
+    if body['object_type']=='sales_order':
+        from .fulfillment import get, children
+        order=get(c,actor,row['id'])
+        if body['warehouse_id'] not in order['warehouse_ids'] or not any(x['sku_id']==body['sku_id'] for x in children(c,m4_schema.lines,row['id'])):
+            fail('INVALID_LINK','异常范围不属于此订单',422)
+    elif body['object_type']=='stock_count':
         _,items=counting.get(c,actor,row['id'])
         if not any(x['warehouse_id']==body['warehouse_id'] and x['sku_id']==body['sku_id'] for x in items):
             fail('INVALID_LINK','任务范围不属于该盘点单',422)
@@ -42,7 +56,24 @@ def get(c,actor,identity):
     row=c.execute(select(tasks).where(tasks.c.id==identity,tasks.c.tenant_id==actor['tenant_id'])).mappings().first()
     if not row: fail('NOT_FOUND','异常任务不存在或未授权',404)
     scope(c,actor,row['warehouse_id'],row['sku_id'])
+    check_connection_scope(c, actor, row)
     return dict(row)
+
+
+def check_connection_scope(c, actor, row):
+    if row['object_type']=='business_event':
+        from .review import event_scope
+        event_scope(c,actor,row['object_id'])
+    if row['object_type']=='analysis_row':
+        from .review import row as analysis_row
+        analysis_row(c,actor,row['object_id'])
+    from . import m4_schema as m4
+    from .m4_common import connection
+    table = {'sales_order': m4.orders, 'connector_inbox': m4.inbox, 'connector_outbox': m4.outbox, 'reconciliation': m4.reconciliations}.get(row['object_type'])
+    if table is not None:
+        identity = c.scalar(select(table.c.connection_id).where(table.c.id == row['object_id'], table.c.tenant_id == actor['tenant_id']))
+        if not identity: fail('NOT_FOUND', '异常关联对象不存在', 404)
+        connection(c, actor, identity, active=False)
 
 
 def view(c,actor,identity):
@@ -102,6 +133,7 @@ def validate_owner(c,actor,row,identity):
     user=c.execute(select(db.users).where(db.users.c.id==identity,db.users.c.tenant_id==actor['tenant_id'])).mappings().first()
     if not user or not active(c,identity) or user['role'] not in ('admin','warehouse') or (user['role']!='admin' and row['warehouse_id'] not in user['warehouse_ids']):
         fail('INVALID_OWNER','负责人须是当前商户中有该仓库权限的有效管理员或仓管',422)
+    check_connection_scope(c, dict(user), row)
 
 
 def act(engine,actor,identity,action,body,key):
@@ -149,7 +181,15 @@ def listing(engine,actor,offset=0,limit=50):
         read_actor(c,actor)
         query=select(tasks.c.id).where(tasks.c.tenant_id==actor['tenant_id'])
         if actor['role']!='admin':query=query.where(tasks.c.warehouse_id.in_(actor['warehouse_ids']))
-        rows=c.execute(query.order_by(tasks.c.updated_at.desc(),tasks.c.id).offset(offset).limit(limit+1)).scalars().all()
+        from .domain import BusinessError
+        rows=[]
+        for identity in c.execute(query.order_by(tasks.c.updated_at.desc(),tasks.c.id)).scalars():
+            try: get(c,actor,identity)
+            except BusinessError as ex:
+                if ex.code=='NOT_FOUND': continue
+                raise
+            rows.append(identity)
+        rows=rows[offset:offset+limit+1]
         return {'items':[view(c,actor,x) for x in rows[:limit]],'has_more':len(rows)>limit,'offset':offset,'limit':limit}
 
 
@@ -160,6 +200,11 @@ def remind(engine,actor,key):
         if actor['role']!='admin':query=query.where(tasks.c.warehouse_id.in_(actor['warehouse_ids']))
         created=0
         for row in c.execute(query).mappings().all():
+            from .domain import BusinessError
+            try: check_connection_scope(c,actor,row)
+            except BusinessError as ex:
+                if ex.code=='NOT_FOUND':continue
+                raise
             if parse_timestamp(row['due_at'])>=parse_timestamp(business_now(engine)):continue
             if c.execute(select(reminders.c.id).where(reminders.c.task_id==row['id'],reminders.c.due_at==row['due_at'])).first():continue
             c.execute(insert(reminders).values(id=uid(),task_id=row['id'],due_at=row['due_at'],created_at=business_now(engine)))

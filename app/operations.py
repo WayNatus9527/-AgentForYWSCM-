@@ -28,9 +28,11 @@ def get_transfer(c,actor,tid,side=None):
     return dict(row)
 
 def transfer_view(c,row):
+    from .supply import managed
     result={**row,'lines':[dict(x) for x in c.execute(select(transfer_lines).where(transfer_lines.c.transfer_id==row['id'])).mappings()],
             'events':[dict(x) for x in c.execute(select(transfer_events).where(transfer_events.c.transfer_id==row['id']).order_by(transfer_events.c.created_at)).mappings()],
             'claims':[dict(x) for x in c.execute(select(claims).where(claims.c.transfer_id==row['id']).order_by(claims.c.created_at)).mappings()]}
+    result['managed_supply']=managed(c,'transfer',row['id'])
     for line in result['lines']:line['in_transit']=line['sent']-line['received']-line['lost']
     return result
 
@@ -59,6 +61,8 @@ def transfer_action(engine,actor,tid,action,body,key):
     require_role(actor,'admin','warehouse')
     def apply(c):
         row=get_transfer(c,actor,tid,'destination' if action=='receive' else 'source')
+        from .supply import managed
+        if managed(c,'transfer',tid):w.fail('MANAGED_SUPPLY','此计划使用分批运输，请在供给批次入口处理')
         if row['version']!=body['expected_version']:w.fail('VERSION_CONFLICT','调拨单已变化，请刷新后重试')
         items=list(c.execute(select(transfer_lines).where(transfer_lines.c.transfer_id==tid)).mappings());docs=[]
         if action in ('reserve','ship','cancel'):
@@ -96,6 +100,8 @@ def discrepancy_request(engine,actor,tid,body,key):
     require_role(actor,'admin','warehouse')
     def apply(c):
         row=get_transfer(c,actor,tid)
+        from .supply import managed
+        if managed(c,'transfer',tid):w.fail('MANAGED_SUPPLY','请按独立运输批次登记差异')
         if row['version']!=body['expected_version']:w.fail('VERSION_CONFLICT','调拨单已变化')
         if row['status'] not in ('in_transit','partial'):w.fail('INVALID_STATE','无待处理在途差异')
         if c.execute(select(claims.c.id).where(claims.c.transfer_id==tid,claims.c.status=='pending')).first():w.fail('PENDING_CLAIM','已有待审核差异申请')

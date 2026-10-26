@@ -74,7 +74,7 @@ class Inspection(Strict):
     details:Details|None=None
 class AccountBase(Strict):
     name:Text
-    role:Literal['admin','warehouse','cashier']
+    role:Literal['admin','warehouse','cashier','operations','analyst']
     warehouse_ids:Annotated[list[Text],Field(max_length=100)]=[]
     @model_validator(mode='after')
     def unique(self):

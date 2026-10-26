@@ -1,0 +1,598 @@
+{
+  "product": "跨境电商供应链管理Agent助手",
+  "version": "0.10.1",
+  "stage": "M6.1",
+  "schema_version": 10,
+  "date": "2026-10-26",
+  "generated_at": "2026-10-26T10:14:51.284999+00:00",
+  "synthetic_data_only": true,
+  "source_code_sha256": "59bbbf2810af72f6f22ae7b89ae74bb859bc2b8e502f67698b81113274b069e0",
+  "source_code_hash_scope": "Paths and contents of app/**/*.py and simulator/**/*.py",
+  "source_archive": {
+    "path": ".local/m6-1-development/delivery/tested-source.tar.gz",
+    "sha256": "6f4cad820ea10ecd8f7a544d262aefec473a03018a97a30e6613665d94044644",
+    "files": 151,
+    "manifest": ".local/m6-1-development/delivery/source-files.json",
+    "manifest_sha256": "4527c56ceb0af1170535a45fa93e0e86dc8bf42563947cadfc6ec59ff0d00753",
+    "scope": [
+      "app",
+      "simulator",
+      "scripts",
+      "tests",
+      ".github",
+      "requirements*.txt"
+    ]
+  },
+  "tests": {
+    "sqlite": {
+      "passed": 387,
+      "skipped": 1,
+      "warnings": 1,
+      "seconds": 184.63,
+      "evidence": ".local/m6-1-development/sqlite-final.log",
+      "sha256": "c6054dac665c6eb65b4cc52de816f89f1f7566313577102cbd4de79bafff7e26"
+    },
+    "postgresql": {
+      "passed": 386,
+      "skipped": 2,
+      "warnings": 1,
+      "seconds": 265.98,
+      "evidence": ".local/m6-1-development/postgresql-final.log",
+      "sha256": "5b75b43813fc77cfe210ac88355b3ae9b88445482f6345179167da42442a97fc"
+    }
+  },
+  "skip_reasons": {
+    "sqlite": [
+      "PostgreSQL restricted-role privilege drift"
+    ],
+    "postgresql": [
+      "Two SQLite backup/restore tests"
+    ]
+  },
+  "warnings": [
+    "Existing Starlette TestClient httpx deprecation"
+  ],
+  "fixed_regression": {
+    "passed": 9,
+    "checks": 1164,
+    "evidence": ".local/m6-1-development/fixed-final/archives/fixed-regression-summary.json",
+    "sha256": "52882d58c783f4ffba66434aae3d74f44d327fc9334a466bbca00a61f12df91c"
+  },
+  "independent_validation": {
+    "groups": 240,
+    "runs": 440,
+    "checks": 5420,
+    "failed": 0,
+    "unique_seeds": 440,
+    "unique_inputs": 440,
+    "code_versions": {
+      "59bbbf2810af72f6f22ae7b89ae74bb859bc2b8e502f67698b81113274b069e0": 440
+    },
+    "counting": "200 M6 baseline/improvement pairs + 40 PostgreSQL M2-M5 runs; tenants do not increase group count"
+  },
+  "batches": [
+    {
+      "backend": "sqlite",
+      "checks": 1888,
+      "coverage": {
+        "actual_quality": {
+          "invalid_clock": 6,
+          "reported": 172,
+          "unknown": 22
+        },
+        "fault": {
+          "after_report_commit": 96,
+          "none": 104
+        },
+        "kind": {
+          "data_delay": 12,
+          "mixed": 26,
+          "negative": 6,
+          "parallel": 26,
+          "pick": 30,
+          "quality": 16,
+          "stock_available": 18,
+          "transport": 16,
+          "unknown": 22,
+          "unlinked": 28
+        },
+        "picking_queue_hours": {
+          "0": 144,
+          "30": 22,
+          "36": 18,
+          "48": 16
+        },
+        "quality_queue_hours": {
+          "0": 58,
+          "10": 23,
+          "12": 21,
+          "36": 12,
+          "48": 15,
+          "6": 12,
+          "60": 23,
+          "72": 21,
+          "8": 15
+        },
+        "variant": {
+          "baseline": 100,
+          "improved": 100
+        }
+      },
+      "diagnostic_accuracy": {
+        "false_negative_rate": 0.0,
+        "false_negatives": 0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "impact_absolute_error": 0,
+        "missing_diagnoses": 0,
+        "observed_diagnoses": 400,
+        "true_negatives": 3308,
+        "true_positives": 180,
+        "unknown_diagnoses": 56,
+        "unknown_rate": 0.14
+      },
+      "elapsed_seconds": 131.854,
+      "failed": 0,
+      "independent_scenario_groups": 100,
+      "interpretation": "模拟单参数干预结果；不外推为真实仓库因果效果或模型准确率",
+      "passed": 200,
+      "purpose": "validation",
+      "stage": "M6",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-1-development/validation-sqlite-final/archives/m6-a4b518f9b2fa3890/report.json",
+      "sha256": "92bac6c05d8bc840db51b910c6ac30dbbe7751d16d91582fd87e706bb53f990a",
+      "paired_experiments": {
+        "compared": 200,
+        "passed": 200
+      }
+    },
+    {
+      "backend": "postgresql",
+      "batch_id": "batch-a8e4fcfc2fcdc3df",
+      "checks": 944,
+      "coverage": {
+        "inspection_rate": {
+          "0.0": 3,
+          "0.25": 5,
+          "1.0": 2
+        },
+        "quality_units_per_hour": {
+          "1": 4,
+          "10": 1,
+          "100": 5
+        },
+        "return_rate": {
+          "0.0": 3,
+          "0.2": 4,
+          "0.8": 1,
+          "1.0": 2
+        },
+        "sales_distribution": {
+          "long_tail": 3,
+          "peaked": 3,
+          "uniform": 4
+        },
+        "shipping_units_per_hour": {
+          "1": 3,
+          "200": 4,
+          "50": 3
+        },
+        "sku_count": {
+          "1": 3,
+          "2": 3,
+          "4": 4
+        },
+        "warehouse_count": {
+          "2": 3,
+          "3": 2,
+          "4": 5
+        }
+      },
+      "elapsed_seconds": 9.09,
+      "failed": 0,
+      "fault_coverage": {
+        "crash_after_commit": 1,
+        "crash_before_commit": 1,
+        "delay": 2,
+        "disconnect": 1,
+        "duplicate": 1,
+        "loss_redelivery": 2,
+        "rate_limit": 1,
+        "reorder": 2,
+        "timeout_after_success": 1
+      },
+      "passed": 10,
+      "purpose": "validation",
+      "scenarios": {
+        "data_latency": 1,
+        "demand_spike": 1,
+        "mixed": 1,
+        "normal": 2,
+        "returns_surge": 1,
+        "slow_sales": 1,
+        "supplier_delay": 1,
+        "transport_exception": 1,
+        "warehouse_congestion": 1
+      },
+      "workers": 2,
+      "stage": "M2",
+      "independent_groups": 10,
+      "evidence": ".local/m6-1-development/postgresql-final/archives/batch-a8e4fcfc2fcdc3df/report.json",
+      "sha256": "284fd9930dacf6b180bf96ce71bb3b716035940ade41b1d841b6f6af17604c3f"
+    },
+    {
+      "backend": "postgresql",
+      "checks": 212,
+      "coverage": {
+        "conflict": {
+          "False": 9,
+          "True": 1
+        },
+        "count_delta": {
+          "-1": 3,
+          "0": 3,
+          "1": 1,
+          "4": 3
+        },
+        "quality_bad": {
+          "1": 3,
+          "2": 2,
+          "3": 3,
+          "4": 2
+        },
+        "quality_good": {
+          "2": 1,
+          "3": 2,
+          "4": 1,
+          "5": 6
+        },
+        "return_good": {
+          "1": 4,
+          "2": 6
+        },
+        "sale": {
+          "2": 3,
+          "3": 3,
+          "4": 4
+        }
+      },
+      "elapsed_seconds": 6.445,
+      "failed": 0,
+      "passed": 10,
+      "purpose": "validation",
+      "stage": "M3",
+      "workers": 2,
+      "independent_groups": 10,
+      "evidence": ".local/m6-1-development/postgresql-final/archives/m3-26fd58609ef36b48/report.json",
+      "sha256": "b9dfa277a492927054fa8778f063ec9999323ddf8bb71f9cf272b8f80f795ca5"
+    },
+    {
+      "backend": "postgresql",
+      "checks": 296,
+      "coverage": {
+        "fault": {
+          "disconnect": 2,
+          "no_query_timeout": 1,
+          "rate_limit": 2,
+          "success": 1,
+          "timeout_after": 2,
+          "worker_crash": 2
+        },
+        "finish": {
+          "False": 3,
+          "True": 7
+        },
+        "grant": {
+          "False": 6,
+          "True": 4
+        },
+        "inbox_cancel": {
+          "False": 5,
+          "True": 5
+        },
+        "quantity": {
+          "10": 2,
+          "11": 3,
+          "12": 2,
+          "14": 1,
+          "6": 1,
+          "8": 1
+        },
+        "restore": {
+          "False": 6,
+          "True": 4
+        },
+        "snapshot_order": {
+          "delta_first": 3,
+          "no_watermark": 3,
+          "snapshot_first": 4
+        }
+      },
+      "elapsed_seconds": 7.782,
+      "failed": 0,
+      "passed": 10,
+      "purpose": "validation",
+      "stage": "M4",
+      "workers": 2,
+      "independent_groups": 10,
+      "evidence": ".local/m6-1-development/postgresql-final/archives/m4-42b992448a807963/report.json",
+      "sha256": "273a4bf2722d0dd571bb207adb81cb2bc9f4b12ac853246ea5f2d641d59854c9"
+    },
+    {
+      "backend": "postgresql",
+      "checks": 216,
+      "coverage": {
+        "close_remaining": {
+          "False": 5,
+          "True": 5
+        },
+        "demand_quality": {
+          "abnormal": 1,
+          "known": 7,
+          "missing": 2
+        },
+        "fault": {
+          "none": 4,
+          "restart_after_confirm": 6
+        },
+        "includes_open_orders": {
+          "False": 3,
+          "True": 7
+        },
+        "pack": {
+          "1": 1,
+          "12": 3,
+          "4": 3,
+          "6": 3
+        },
+        "reserve_order": {
+          "False": 6,
+          "True": 4
+        },
+        "supply_due": {
+          "outside": 2,
+          "overdue": 2,
+          "timely": 3,
+          "unknown": 3
+        },
+        "transfer_lost": {
+          "0": 4,
+          "1": 3,
+          "3": 1,
+          "6": 1,
+          "7": 1
+        }
+      },
+      "elapsed_seconds": 9.143,
+      "failed": 0,
+      "passed": 10,
+      "purpose": "validation",
+      "stage": "M5",
+      "workers": 2,
+      "independent_groups": 10,
+      "evidence": ".local/m6-1-development/postgresql-final/archives/m5-ce36013d35d1075f/report.json",
+      "sha256": "faa0921baa4860b40b928e2b898ba751209a534d35a68f917e5310743c97963c"
+    },
+    {
+      "backend": "postgresql",
+      "checks": 1864,
+      "coverage": {
+        "actual_quality": {
+          "invalid_clock": 10,
+          "reported": 164,
+          "unknown": 26
+        },
+        "fault": {
+          "after_report_commit": 88,
+          "none": 112
+        },
+        "kind": {
+          "data_delay": 20,
+          "mixed": 26,
+          "negative": 10,
+          "parallel": 18,
+          "pick": 26,
+          "quality": 22,
+          "stock_available": 20,
+          "transport": 24,
+          "unknown": 26,
+          "unlinked": 8
+        },
+        "picking_queue_hours": {
+          "0": 148,
+          "30": 12,
+          "36": 14,
+          "48": 26
+        },
+        "quality_queue_hours": {
+          "0": 70,
+          "10": 16,
+          "12": 23,
+          "36": 13,
+          "48": 13,
+          "6": 13,
+          "60": 16,
+          "72": 23,
+          "8": 13
+        },
+        "variant": {
+          "baseline": 100,
+          "improved": 100
+        }
+      },
+      "diagnostic_accuracy": {
+        "false_negative_rate": 0.0,
+        "false_negatives": 0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "impact_absolute_error": 0,
+        "missing_diagnoses": 0,
+        "observed_diagnoses": 400,
+        "true_negatives": 3286,
+        "true_positives": 170,
+        "unknown_diagnoses": 72,
+        "unknown_rate": 0.18
+      },
+      "elapsed_seconds": 148.707,
+      "failed": 0,
+      "independent_scenario_groups": 100,
+      "interpretation": "模拟单参数干预结果；不外推为真实仓库因果效果或模型准确率",
+      "passed": 200,
+      "purpose": "validation",
+      "stage": "M6",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-1-development/postgresql-final/archives/m6-2532535dae6c59ed/report.json",
+      "sha256": "d4422bcc7a8eaef73a1dc665dc460ab53f0c5c2988c93e69777ffa45e421c22b",
+      "paired_experiments": {
+        "compared": 200,
+        "passed": 200
+      }
+    }
+  ],
+  "m6_diagnostics": {
+    "false_negatives": 0,
+    "false_positives": 0,
+    "impact_absolute_error": 0,
+    "missing_diagnoses": 0,
+    "observed_diagnoses": 800,
+    "true_negatives": 6594,
+    "true_positives": 350,
+    "unknown_diagnoses": 128,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "unknown_rate": 0.16
+  },
+  "m6_paired_tenant_comparisons": 400,
+  "m6_actual_after_commit_crash_recoveries": 184,
+  "queue_regression": {
+    "unit_tests": 10,
+    "included_in_both_full_suites": true,
+    "real_before_commit_process_exit": {
+      "exit_code": 97,
+      "backends": [
+        "sqlite",
+        "postgresql"
+      ],
+      "test": "tests/test_m6_simulator.py::test_real_process_death_before_publish_then_continuous_recovery"
+    },
+    "evidence": ".local/m6-1-development/queue-final-targeted.log",
+    "sha256": "14d4ffedfaaef78c3a0ad97134e78d85b2251c7e803883734a3b65617a8a4e1f"
+  },
+  "browser": {
+    "m6": {
+      "passed": true,
+      "steps": [
+        "background-report-quantiles-constraint",
+        "idempotent-improvement-task",
+        "append-only-time-correction",
+        "before-after-comparison",
+        "deterministic-explanation-tracking",
+        "agent-proposal-keeps-human-confirmation",
+        "mobile-no-overflow",
+        "analyst-authorized-read-only-tools",
+        "cashier-denied"
+      ],
+      "pageErrors": [],
+      "base": "http://127.0.0.1:8026",
+      "evidence": ".local/m6-1-development/browser-m6-verified/report.json",
+      "sha256": "6cbfa05de3d191131d13e971b4b14402bf58e4d0e154ff0b49005a0ab7e17acb"
+    },
+    "queue": {
+      "passed": true,
+      "steps": [
+        "startup-drains-persisted-queue",
+        "failed-job-survives-reload",
+        "manual-retry-publishes-single-report",
+        "durable-attempt-history",
+        "mobile-queue-and-history",
+        "owner-scope-and-late-response-isolation"
+      ],
+      "pageErrors": [],
+      "base": "http://127.0.0.1:8026",
+      "run_id": "dev-57a30389f56a3204",
+      "asset_sha256": "9b758b9c6684c6562be4acd4f2966d8ea99d13a48e5313456b482e7908f2be2c",
+      "evidence": ".local/m6-1-development/browser-queue-verified/report.json",
+      "sha256": "07cb35a0c14d651de71f50ba47f56077978352e7c0906e5d39d19fd89e905a67"
+    }
+  },
+  "layout": {
+    "passed": true,
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "horizontalTableScroll": {
+      "scrollWidth": 424,
+      "clientWidth": 314,
+      "left": 110
+    },
+    "actionsReachable": true,
+    "screenshots": [
+      "desktop-history.png",
+      "mobile-queue.png",
+      "mobile-queue-actions.png",
+      "mobile-history.png"
+    ],
+    "evidence": ".local/m6-1-development/browser-layout-verified/report.json",
+    "sha256": "d286094964b81bf57549da6daa061175c0725bf92287197c8c646d8e23417364"
+  },
+  "upgrade": {
+    "verified": true,
+    "source": "/Users/wilson/ALL/For AGI/义乌跨境电商供应链管理Agent助手/.local/m6-development/development-final/runs/dev-013eb0c441d28346/business/inventory.db",
+    "preserved_tables": 87,
+    "added_tables": 1,
+    "added_job_columns": 4,
+    "versions": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "migration_idempotent": true,
+    "restore_verified": true,
+    "backup_sha256": "ebd332b467b0b1b543e348915d0f98b81e9cd5a514667b6b096251763b0e82b6",
+    "upgraded_backup_sha256": "5b1e78ead6f23fbbc97ce7210d510eca9eaa46e2c5f92a3a14008938b6cf5cdd",
+    "evidence": ".local/m6-1-development/upgrade-final/report.json",
+    "sha256": "958dfa26e13363feb42508a29f7847ff566f4ccd40c60c2461b9780d0d9ea1fb"
+  },
+  "early_verification": [
+    {
+      "reason": "Test fixture inserted response-only replayed field into a database row; fixed fixture",
+      "evidence": ".local/m6-1-development/queue-a.log",
+      "sha256": "c4661c2249e650a7698d85f2c6520559bbaf6b39c076d475125d1b6837911292"
+    },
+    {
+      "reason": "Browser fixture assumed a warehouse account existed; final script creates it explicitly",
+      "evidence": ".local/m6-1-development/browser-queue-final/report.json",
+      "sha256": "ea393e1aa5ed43ec81c34e19dcbec05c33d1003662f7b01d353ea6a74f758f82"
+    }
+  ],
+  "development": {
+    "root": ".local/m6-1-development/development-verified",
+    "run_id": "dev-57a30389f56a3204",
+    "url": "http://127.0.0.1:8026/",
+    "username": "tenant-0-admin",
+    "password_location": "business/login.json; excluded from release artifacts"
+  },
+  "historical_capacity": {
+    "version": "0.10.0",
+    "evidence": "docs/M6_验收摘要.json",
+    "rerun_for_this_version": false
+  },
+  "limitations": [
+    "No real model calls, external connections or production deployment",
+    "In-process recovery worker and optional CLI loop; no OS automatic restart service configured",
+    "Worker status is local process health, not a distributed heartbeat or tenant queue metric",
+    "Long report transactions can contend with same-tenant writes; no new capacity or concurrency claim",
+    "Cross-batch causality, incomplete historical time/stock and calendar holidays retain M6 limitations",
+    "M3-M6 captured time-slice replay and remote GitHub CI remain unverified"
+  ]
+}

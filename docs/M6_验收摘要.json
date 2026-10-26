@@ -1,0 +1,1193 @@
+{
+  "product": "跨境电商供应链管理Agent助手",
+  "version": "0.10.0",
+  "stage": "M6",
+  "schema_version": 9,
+  "date": "2026-10-25",
+  "generated_at": "2026-10-25T13:33:36.657873+00:00",
+  "synthetic_data_only": true,
+  "source_code_sha256": "a0f1d1a2ab84b8f7b7998155fbb12cb52b9d3627320831f597dfb5295a347f54",
+  "source_code_hash_scope": "Paths and contents of app/**/*.py and simulator/**/*.py",
+  "source_archive": {
+    "path": ".local/m6-development/delivery/tested-source.tar.gz",
+    "sha256": "1090b4af8b30c9f4e0ab0df094682a77a25344206246fb0cc39b8a377656f99d",
+    "files": 143,
+    "manifest": ".local/m6-development/delivery/source-files.json",
+    "manifest_sha256": "1ff5676a792f826a792f95ad07fdf93b99f43c7cfd9b7f4342ad2e544eb6982c",
+    "scope": [
+      "app",
+      "simulator",
+      "scripts",
+      "tests",
+      ".github",
+      "requirements*.txt"
+    ]
+  },
+  "tests": {
+    "sqlite": {
+      "passed": 376,
+      "skipped": 1,
+      "warnings": 1,
+      "seconds": 178.25,
+      "evidence": ".local/m6-development/sqlite-final.log",
+      "sha256": "141abf63abeb1a9dfeb6b04f824fac1a171c985d0394ad5c014cdc2b931ff653"
+    },
+    "postgresql": {
+      "passed": 375,
+      "skipped": 2,
+      "warnings": 1,
+      "seconds": 263.7,
+      "evidence": ".local/m6-development/postgresql-final.log",
+      "sha256": "9a4d32e70fd1db6489f45dfcde48f12f14e1856700fc2fb12f3d52327b089c65"
+    }
+  },
+  "skip_reasons": {
+    "sqlite": [
+      "PostgreSQL restricted-role privilege drift"
+    ],
+    "postgresql": [
+      "Two SQLite backup/restore tests"
+    ]
+  },
+  "warnings": [
+    "Existing Starlette TestClient httpx deprecation"
+  ],
+  "fixed_regression": {
+    "passed": 9,
+    "checks": 1164,
+    "evidence": ".local/m6-development/fixed-final/archives/fixed-regression-summary.json",
+    "sha256": "c65d0ed621eed2a47294f217e59f2e92b3562e6aaee376cfeee0aa11673359c7"
+  },
+  "independent_validation": {
+    "groups": 1000,
+    "runs": 1200,
+    "checks": 37955,
+    "failed": 0,
+    "unique_seeds": 1200,
+    "unique_inputs": 1200,
+    "code_versions": {
+      "a0f1d1a2ab84b8f7b7998155fbb12cb52b9d3627320831f597dfb5295a347f54": 1200
+    },
+    "counting": "M2-M5: one run per group; M6: baseline+improved pair counts once; tenants do not increase group count"
+  },
+  "batches": [
+    {
+      "backend": "sqlite",
+      "batch_id": "batch-2517b74efcfd2f50",
+      "checks": 9648,
+      "coverage": {
+        "inspection_rate": {
+          "0.0": 29,
+          "0.25": 44,
+          "1.0": 27
+        },
+        "quality_units_per_hour": {
+          "1": 25,
+          "10": 40,
+          "100": 35
+        },
+        "return_rate": {
+          "0.0": 25,
+          "0.2": 23,
+          "0.8": 21,
+          "1.0": 31
+        },
+        "sales_distribution": {
+          "long_tail": 33,
+          "peaked": 33,
+          "uniform": 34
+        },
+        "shipping_units_per_hour": {
+          "1": 36,
+          "200": 36,
+          "50": 28
+        },
+        "sku_count": {
+          "1": 25,
+          "2": 25,
+          "3": 27,
+          "4": 23
+        },
+        "warehouse_count": {
+          "2": 34,
+          "3": 36,
+          "4": 30
+        }
+      },
+      "elapsed_seconds": 71.235,
+      "failed": 0,
+      "fault_coverage": {
+        "crash_after_commit": 11,
+        "crash_before_commit": 11,
+        "delay": 22,
+        "disconnect": 11,
+        "duplicate": 11,
+        "loss_redelivery": 22,
+        "rate_limit": 11,
+        "reorder": 22,
+        "timeout_after_success": 11
+      },
+      "passed": 100,
+      "purpose": "validation",
+      "scenarios": {
+        "data_latency": 11,
+        "demand_spike": 11,
+        "mixed": 11,
+        "normal": 12,
+        "returns_surge": 11,
+        "slow_sales": 11,
+        "supplier_delay": 11,
+        "transport_exception": 11,
+        "warehouse_congestion": 11
+      },
+      "workers": 2,
+      "stage": "M2",
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/validation-sqlite-final/archives/batch-2517b74efcfd2f50/report.json",
+      "sha256": "ee4841c7635baab60cfa301bff51c5ebfab9f5301c8fb2bb48cf4687f03e5c6d"
+    },
+    {
+      "backend": "sqlite",
+      "checks": 2394,
+      "coverage": {
+        "conflict": {
+          "False": 47,
+          "True": 53
+        },
+        "count_delta": {
+          "-1": 19,
+          "0": 35,
+          "1": 21,
+          "4": 25
+        },
+        "quality_bad": {
+          "1": 24,
+          "2": 18,
+          "3": 24,
+          "4": 34
+        },
+        "quality_good": {
+          "1": 19,
+          "2": 18,
+          "3": 21,
+          "4": 19,
+          "5": 23
+        },
+        "return_good": {
+          "1": 56,
+          "2": 44
+        },
+        "sale": {
+          "2": 37,
+          "3": 30,
+          "4": 33
+        }
+      },
+      "elapsed_seconds": 56.828,
+      "failed": 0,
+      "passed": 100,
+      "purpose": "validation",
+      "stage": "M3",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/validation-sqlite-final/archives/m3-d281a314c5b8714b/report.json",
+      "sha256": "c4253ce1782beabde78beac7f701b81066040840ffbfd399e58c1afe4578ac7b"
+    },
+    {
+      "backend": "sqlite",
+      "checks": 2912,
+      "coverage": {
+        "fault": {
+          "disconnect": 19,
+          "no_query_timeout": 15,
+          "rate_limit": 16,
+          "success": 17,
+          "timeout_after": 17,
+          "worker_crash": 16
+        },
+        "finish": {
+          "False": 41,
+          "True": 59
+        },
+        "grant": {
+          "False": 49,
+          "True": 51
+        },
+        "inbox_cancel": {
+          "False": 61,
+          "True": 39
+        },
+        "quantity": {
+          "10": 18,
+          "11": 13,
+          "12": 6,
+          "13": 10,
+          "14": 4,
+          "15": 2,
+          "16": 1,
+          "3": 1,
+          "4": 3,
+          "5": 7,
+          "6": 4,
+          "7": 7,
+          "8": 10,
+          "9": 14
+        },
+        "restore": {
+          "False": 38,
+          "True": 62
+        },
+        "snapshot_order": {
+          "delta_first": 33,
+          "no_watermark": 33,
+          "snapshot_first": 34
+        }
+      },
+      "elapsed_seconds": 60.682,
+      "failed": 0,
+      "passed": 100,
+      "purpose": "validation",
+      "stage": "M4",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/validation-sqlite-final/archives/m4-f271428ab9dee6c5/report.json",
+      "sha256": "50c33c3e9300f3bc05aef21f37e80a098cbe8327d24ff952cab3a5d3a968d35e"
+    },
+    {
+      "backend": "sqlite",
+      "checks": 2141,
+      "coverage": {
+        "close_remaining": {
+          "False": 48,
+          "True": 52
+        },
+        "demand_quality": {
+          "abnormal": 15,
+          "known": 66,
+          "missing": 19
+        },
+        "fault": {
+          "none": 53,
+          "restart_after_confirm": 47
+        },
+        "includes_open_orders": {
+          "False": 46,
+          "True": 54
+        },
+        "pack": {
+          "1": 20,
+          "12": 25,
+          "4": 33,
+          "6": 22
+        },
+        "reserve_order": {
+          "False": 53,
+          "True": 47
+        },
+        "supply_due": {
+          "outside": 18,
+          "overdue": 33,
+          "timely": 24,
+          "unknown": 25
+        },
+        "transfer_lost": {
+          "0": 26,
+          "1": 27,
+          "2": 15,
+          "3": 9,
+          "4": 9,
+          "5": 10,
+          "7": 2,
+          "8": 1,
+          "9": 1
+        }
+      },
+      "elapsed_seconds": 64.407,
+      "failed": 0,
+      "passed": 100,
+      "purpose": "validation",
+      "stage": "M5",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/validation-sqlite-final/archives/m5-b15bba89aa4fe840/report.json",
+      "sha256": "83dc183feba841e7cfdbe1fb1ba278d2c139b36af07d62e356cbb8045d8c2ae4"
+    },
+    {
+      "backend": "sqlite",
+      "checks": 1882,
+      "coverage": {
+        "actual_quality": {
+          "invalid_clock": 16,
+          "reported": 160,
+          "unknown": 24
+        },
+        "fault": {
+          "after_report_commit": 94,
+          "none": 106
+        },
+        "kind": {
+          "data_delay": 20,
+          "mixed": 24,
+          "negative": 16,
+          "parallel": 18,
+          "pick": 22,
+          "quality": 18,
+          "stock_available": 24,
+          "transport": 20,
+          "unknown": 24,
+          "unlinked": 14
+        },
+        "picking_queue_hours": {
+          "0": 154,
+          "30": 18,
+          "36": 14,
+          "48": 14
+        },
+        "quality_queue_hours": {
+          "0": 62,
+          "10": 21,
+          "12": 18,
+          "36": 14,
+          "48": 16,
+          "6": 14,
+          "60": 21,
+          "72": 18,
+          "8": 16
+        },
+        "variant": {
+          "baseline": 100,
+          "improved": 100
+        }
+      },
+      "diagnostic_accuracy": {
+        "false_negative_rate": 0.0,
+        "false_negatives": 0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "impact_absolute_error": 0,
+        "missing_diagnoses": 0,
+        "observed_diagnoses": 400,
+        "true_negatives": 3288,
+        "true_positives": 152,
+        "unknown_diagnoses": 80,
+        "unknown_rate": 0.2
+      },
+      "elapsed_seconds": 142.005,
+      "failed": 0,
+      "independent_scenario_groups": 100,
+      "interpretation": "模拟单参数干预结果；不外推为真实仓库因果效果或模型准确率",
+      "passed": 200,
+      "purpose": "validation",
+      "stage": "M6",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/validation-sqlite-final/archives/m6-bd99228ae3253b9e/report.json",
+      "sha256": "7f898ef66daaba735ef916a7b377edead2108c349bfc6c988333e5d30953da4a",
+      "paired_experiments": {
+        "compared": 200,
+        "passed": 200
+      }
+    },
+    {
+      "backend": "postgresql",
+      "batch_id": "batch-2c2b5b233f626217",
+      "checks": 9658,
+      "coverage": {
+        "inspection_rate": {
+          "0.0": 40,
+          "0.25": 30,
+          "1.0": 30
+        },
+        "quality_units_per_hour": {
+          "1": 34,
+          "10": 36,
+          "100": 30
+        },
+        "return_rate": {
+          "0.0": 25,
+          "0.2": 25,
+          "0.8": 24,
+          "1.0": 26
+        },
+        "sales_distribution": {
+          "long_tail": 33,
+          "peaked": 33,
+          "uniform": 34
+        },
+        "shipping_units_per_hour": {
+          "1": 26,
+          "200": 31,
+          "50": 43
+        },
+        "sku_count": {
+          "1": 23,
+          "2": 28,
+          "3": 23,
+          "4": 26
+        },
+        "warehouse_count": {
+          "2": 35,
+          "3": 36,
+          "4": 29
+        }
+      },
+      "elapsed_seconds": 130.227,
+      "failed": 0,
+      "fault_coverage": {
+        "crash_after_commit": 11,
+        "crash_before_commit": 11,
+        "delay": 22,
+        "disconnect": 11,
+        "duplicate": 11,
+        "loss_redelivery": 22,
+        "rate_limit": 11,
+        "reorder": 22,
+        "timeout_after_success": 11
+      },
+      "passed": 100,
+      "purpose": "validation",
+      "scenarios": {
+        "data_latency": 11,
+        "demand_spike": 11,
+        "mixed": 11,
+        "normal": 12,
+        "returns_surge": 11,
+        "slow_sales": 11,
+        "supplier_delay": 11,
+        "transport_exception": 11,
+        "warehouse_congestion": 11
+      },
+      "workers": 2,
+      "stage": "M2",
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/postgresql-final/archives/batch-2c2b5b233f626217/report.json",
+      "sha256": "5e798e2fd43c2cdb52bee39d9dddbfbc6272ad85f9fad7021cb17dc927d5ac9b"
+    },
+    {
+      "backend": "postgresql",
+      "checks": 2362,
+      "coverage": {
+        "conflict": {
+          "False": 50,
+          "True": 50
+        },
+        "count_delta": {
+          "-1": 23,
+          "0": 31,
+          "1": 24,
+          "4": 22
+        },
+        "quality_bad": {
+          "1": 27,
+          "2": 22,
+          "3": 24,
+          "4": 27
+        },
+        "quality_good": {
+          "1": 13,
+          "2": 17,
+          "3": 20,
+          "4": 28,
+          "5": 22
+        },
+        "return_good": {
+          "1": 52,
+          "2": 48
+        },
+        "sale": {
+          "2": 33,
+          "3": 34,
+          "4": 33
+        }
+      },
+      "elapsed_seconds": 75.067,
+      "failed": 0,
+      "passed": 100,
+      "purpose": "validation",
+      "stage": "M3",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/postgresql-final/archives/m3-627ad43f7f371aac/report.json",
+      "sha256": "25daa6646ad6df9762b5e692d8bfacf7ef6b12ff43a0bfc281083b2a141ed864"
+    },
+    {
+      "backend": "postgresql",
+      "checks": 2921,
+      "coverage": {
+        "fault": {
+          "disconnect": 20,
+          "no_query_timeout": 17,
+          "rate_limit": 12,
+          "success": 21,
+          "timeout_after": 13,
+          "worker_crash": 17
+        },
+        "finish": {
+          "False": 47,
+          "True": 53
+        },
+        "grant": {
+          "False": 50,
+          "True": 50
+        },
+        "inbox_cancel": {
+          "False": 51,
+          "True": 49
+        },
+        "quantity": {
+          "10": 11,
+          "11": 12,
+          "12": 5,
+          "13": 13,
+          "14": 1,
+          "15": 1,
+          "16": 3,
+          "3": 1,
+          "4": 1,
+          "5": 3,
+          "6": 9,
+          "7": 9,
+          "8": 19,
+          "9": 12
+        },
+        "restore": {
+          "False": 47,
+          "True": 53
+        },
+        "snapshot_order": {
+          "delta_first": 32,
+          "no_watermark": 28,
+          "snapshot_first": 40
+        }
+      },
+      "elapsed_seconds": 72.762,
+      "failed": 0,
+      "passed": 100,
+      "purpose": "validation",
+      "stage": "M4",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/postgresql-final/archives/m4-fb400c9144eae223/report.json",
+      "sha256": "a694fb91b448319a6ce91cee5e58a26fbcfaa9fb26f7697f7a82b938694765e7"
+    },
+    {
+      "backend": "postgresql",
+      "checks": 2143,
+      "coverage": {
+        "close_remaining": {
+          "False": 53,
+          "True": 47
+        },
+        "demand_quality": {
+          "abnormal": 19,
+          "known": 64,
+          "missing": 17
+        },
+        "fault": {
+          "none": 51,
+          "restart_after_confirm": 49
+        },
+        "includes_open_orders": {
+          "False": 47,
+          "True": 53
+        },
+        "pack": {
+          "1": 27,
+          "12": 18,
+          "4": 29,
+          "6": 26
+        },
+        "reserve_order": {
+          "False": 46,
+          "True": 54
+        },
+        "supply_due": {
+          "outside": 20,
+          "overdue": 26,
+          "timely": 24,
+          "unknown": 30
+        },
+        "transfer_lost": {
+          "0": 29,
+          "1": 24,
+          "2": 15,
+          "3": 13,
+          "4": 5,
+          "5": 6,
+          "6": 5,
+          "7": 2,
+          "8": 1
+        }
+      },
+      "elapsed_seconds": 91.786,
+      "failed": 0,
+      "passed": 100,
+      "purpose": "validation",
+      "stage": "M5",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/postgresql-final/archives/m5-1ba85dec5aa70600/report.json",
+      "sha256": "78cb2f45a839273a1d932df7a7980f2e104bf946a2e4692689d1fc4df78cb044"
+    },
+    {
+      "backend": "postgresql",
+      "checks": 1894,
+      "coverage": {
+        "actual_quality": {
+          "invalid_clock": 24,
+          "reported": 160,
+          "unknown": 16
+        },
+        "fault": {
+          "after_report_commit": 98,
+          "none": 102
+        },
+        "kind": {
+          "data_delay": 18,
+          "mixed": 26,
+          "negative": 24,
+          "parallel": 24,
+          "pick": 26,
+          "quality": 12,
+          "stock_available": 16,
+          "transport": 20,
+          "unknown": 16,
+          "unlinked": 18
+        },
+        "picking_queue_hours": {
+          "0": 148,
+          "30": 18,
+          "36": 12,
+          "48": 22
+        },
+        "quality_queue_hours": {
+          "0": 64,
+          "10": 18,
+          "12": 18,
+          "36": 16,
+          "48": 16,
+          "6": 16,
+          "60": 18,
+          "72": 18,
+          "8": 16
+        },
+        "variant": {
+          "baseline": 100,
+          "improved": 100
+        }
+      },
+      "diagnostic_accuracy": {
+        "false_negative_rate": 0.0,
+        "false_negatives": 0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "impact_absolute_error": 0,
+        "missing_diagnoses": 0,
+        "observed_diagnoses": 400,
+        "true_negatives": 3274,
+        "true_positives": 166,
+        "unknown_diagnoses": 80,
+        "unknown_rate": 0.2
+      },
+      "elapsed_seconds": 169.315,
+      "failed": 0,
+      "independent_scenario_groups": 100,
+      "interpretation": "模拟单参数干预结果；不外推为真实仓库因果效果或模型准确率",
+      "passed": 200,
+      "purpose": "validation",
+      "stage": "M6",
+      "workers": 2,
+      "independent_groups": 100,
+      "evidence": ".local/m6-development/postgresql-final/archives/m6-d1bf582f89b5cc43/report.json",
+      "sha256": "0e4baae3db12a41ad3278ddc4512410b174ecc572cd4f5ee0f9ac6cf022572a4",
+      "paired_experiments": {
+        "compared": 200,
+        "passed": 200
+      }
+    }
+  ],
+  "m6_diagnostics": {
+    "false_negatives": 0,
+    "false_positives": 0,
+    "impact_absolute_error": 0,
+    "missing_diagnoses": 0,
+    "observed_diagnoses": 800,
+    "true_negatives": 6562,
+    "true_positives": 318,
+    "unknown_diagnoses": 160,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "unknown_rate": 0.2
+  },
+  "m6_paired_tenant_comparisons": 400,
+  "m6_actual_crash_recoveries": 192,
+  "capacity_host": {
+    "cpu": "Apple M2",
+    "logical_cpus": 8,
+    "memory_bytes": 17179869184,
+    "source": "Read-only sysctl machdep.cpu.brand_string hw.logicalcpu hw.memsize",
+    "database": "SQLite",
+    "concurrent_clients": 1
+  },
+  "capacity": [
+    {
+      "analysis": {
+        "job_status": "completed",
+        "open_orders": 1000,
+        "samples": 2000,
+        "seconds": 0.24064895801711828
+      },
+      "backend": "sqlite",
+      "code_version": "a0f1d1a2ab84b8f7b7998155fbb12cb52b9d3627320831f597dfb5295a347f54",
+      "concurrent_clients": 1,
+      "cpu_seconds": 0.927039,
+      "failed_requests": 0,
+      "fixture": "真实建单并确认；均未预占，按SKU与仓库均匀分配，稀疏期初库存；非完成订单混合压测",
+      "fixture_and_measurement_seconds": 5.360204167023767,
+      "host": {
+        "machine": "arm64",
+        "system": "macOS-27.0.1-arm64-arm-64bit"
+      },
+      "measurements": {
+        "event_page": {
+          "failed": 0,
+          "max_seconds": 0.007911749999038875,
+          "p50_seconds": 0.006481041025836021,
+          "p95_seconds": 0.006855040992377326,
+          "requests_per_second": 151.90714906328114,
+          "samples": 20
+        },
+        "order_page": {
+          "failed": 0,
+          "max_seconds": 0.017920999991474673,
+          "p50_seconds": 0.016224624996539205,
+          "p95_seconds": 0.016655708983307704,
+          "requests_per_second": 61.264264356346516,
+          "samples": 20
+        },
+        "receipt_write": {
+          "failed": 0,
+          "max_seconds": 0.009723875002237037,
+          "p50_seconds": 0.004071375005878508,
+          "p95_seconds": 0.005793958000140265,
+          "requests_per_second": 225.19173296358326,
+          "samples": 20
+        },
+        "report_page": {
+          "failed": 0,
+          "max_seconds": 0.004442083009053022,
+          "p50_seconds": 0.0024411250196862966,
+          "p95_seconds": 0.002759499999228865,
+          "requests_per_second": 388.35077362857703,
+          "samples": 20
+        }
+      },
+      "not_measured": [
+        "并发多用户",
+        "真实外部连接",
+        "模型响应时间"
+      ],
+      "orders": 1000,
+      "passed": true,
+      "peak_rss_bytes": 125485056,
+      "run_id": "dev-6578fd4852dfead0",
+      "sku_count": 100,
+      "tier": "small",
+      "warehouse_count": 2,
+      "evidence": ".local/m6-development/capacity-small-final/runs/dev-6578fd4852dfead0/reports/performance.json",
+      "sha256": "77b25762440e4b45dc054c7af7731eaa49d9fa987329e2920bf6c12b96bd82fd"
+    },
+    {
+      "analysis": {
+        "job_status": "completed",
+        "open_orders": 10000,
+        "samples": 8000,
+        "seconds": 1.3241109999944456
+      },
+      "backend": "sqlite",
+      "code_version": "a0f1d1a2ab84b8f7b7998155fbb12cb52b9d3627320831f597dfb5295a347f54",
+      "concurrent_clients": 1,
+      "cpu_seconds": 3.5725529999999965,
+      "failed_requests": 0,
+      "fixture": "真实建单并确认；均未预占，按SKU与仓库均匀分配，稀疏期初库存；非完成订单混合压测",
+      "fixture_and_measurement_seconds": 45.96026287498535,
+      "host": {
+        "machine": "arm64",
+        "system": "macOS-27.0.1-arm64-arm-64bit"
+      },
+      "measurements": {
+        "event_page": {
+          "failed": 0,
+          "max_seconds": 0.06424116701236926,
+          "p50_seconds": 0.061924415989778936,
+          "p95_seconds": 0.0636136659886688,
+          "requests_per_second": 16.148568444091566,
+          "samples": 20
+        },
+        "order_page": {
+          "failed": 0,
+          "max_seconds": 0.04322074999799952,
+          "p50_seconds": 0.041040708019863814,
+          "p95_seconds": 0.04195987500133924,
+          "requests_per_second": 24.26631677053276,
+          "samples": 20
+        },
+        "receipt_write": {
+          "failed": 0,
+          "max_seconds": 0.006273416016483679,
+          "p50_seconds": 0.004119041986996308,
+          "p95_seconds": 0.004602417000569403,
+          "requests_per_second": 233.6976438207514,
+          "samples": 20
+        },
+        "report_page": {
+          "failed": 0,
+          "max_seconds": 0.005048166000051424,
+          "p50_seconds": 0.002500709000742063,
+          "p95_seconds": 0.0027239579940214753,
+          "requests_per_second": 377.3169713568336,
+          "samples": 20
+        }
+      },
+      "not_measured": [
+        "并发多用户",
+        "真实外部连接",
+        "模型响应时间"
+      ],
+      "orders": 10000,
+      "passed": true,
+      "peak_rss_bytes": 226443264,
+      "run_id": "dev-4d5672f7700f89bf",
+      "sku_count": 1000,
+      "tier": "medium",
+      "warehouse_count": 5,
+      "evidence": ".local/m6-development/capacity-medium-final/runs/dev-4d5672f7700f89bf/reports/performance.json",
+      "sha256": "a57b8564ae7b0186ad1ff1fbbff282865852eba715a340b22cf43d068c3ecb28"
+    },
+    {
+      "analysis": {
+        "job_status": "completed",
+        "open_orders": 100000,
+        "samples": 40000,
+        "seconds": 14.510160541976802
+      },
+      "backend": "sqlite",
+      "code_version": "a0f1d1a2ab84b8f7b7998155fbb12cb52b9d3627320831f597dfb5295a347f54",
+      "concurrent_clients": 1,
+      "cpu_seconds": 33.516075999999934,
+      "failed_requests": 0,
+      "fixture": "真实建单并确认；均未预占，按SKU与仓库均匀分配，稀疏期初库存；非完成订单混合压测",
+      "fixture_and_measurement_seconds": 514.2120487500215,
+      "host": {
+        "machine": "arm64",
+        "system": "macOS-27.0.1-arm64-arm-64bit"
+      },
+      "measurements": {
+        "event_page": {
+          "failed": 0,
+          "max_seconds": 0.6978129580093082,
+          "p50_seconds": 0.6681435830250848,
+          "p95_seconds": 0.6879732909728773,
+          "requests_per_second": 1.4896108581737662,
+          "samples": 20
+        },
+        "order_page": {
+          "failed": 0,
+          "max_seconds": 0.29788612501579337,
+          "p50_seconds": 0.2881116250064224,
+          "p95_seconds": 0.2976917500200216,
+          "requests_per_second": 3.4580723424453828,
+          "samples": 20
+        },
+        "receipt_write": {
+          "failed": 0,
+          "max_seconds": 0.006549792014993727,
+          "p50_seconds": 0.00422400000388734,
+          "p95_seconds": 0.0050641249981708825,
+          "requests_per_second": 223.80523642616564,
+          "samples": 20
+        },
+        "report_page": {
+          "failed": 0,
+          "max_seconds": 0.00524200001382269,
+          "p50_seconds": 0.0024929160135798156,
+          "p95_seconds": 0.0028891249967273325,
+          "requests_per_second": 374.47632958838676,
+          "samples": 20
+        }
+      },
+      "not_measured": [
+        "并发多用户",
+        "真实外部连接",
+        "模型响应时间"
+      ],
+      "orders": 100000,
+      "passed": true,
+      "peak_rss_bytes": 900317184,
+      "run_id": "dev-46ff25d85907192f",
+      "sku_count": 10000,
+      "tier": "large",
+      "warehouse_count": 10,
+      "evidence": ".local/m6-development/capacity-large-final/runs/dev-46ff25d85907192f/reports/performance.json",
+      "sha256": "2f45e1dadb9e411331c7f4888bb023686e030065659acaae7254bb7d9edf6a5f"
+    }
+  ],
+  "browser": {
+    "passed": true,
+    "steps": [
+      "background-report-quantiles-constraint",
+      "idempotent-improvement-task",
+      "append-only-time-correction",
+      "before-after-comparison",
+      "deterministic-explanation-tracking",
+      "agent-proposal-keeps-human-confirmation",
+      "mobile-no-overflow",
+      "analyst-authorized-read-only-tools",
+      "cashier-denied"
+    ],
+    "pageErrors": [],
+    "base": "http://127.0.0.1:8025",
+    "evidence": ".local/m6-development/browser-final/report.json",
+    "sha256": "443bc075a5a77d7ed31b726490046b2b64ed475d68fb2ddbbd11cdb6b41e41d0"
+  },
+  "mobile_layout": {
+    "passed": true,
+    "dimensions": {
+      "width": 390,
+      "documentWidth": 390,
+      "height": 4352,
+      "mainCount": 1
+    },
+    "screenshots": [
+      "mobile-top.png",
+      "mobile-constraint.png",
+      "mobile-agent.png"
+    ],
+    "evidence": ".local/m6-development/browser-layout-final/layout-report.json",
+    "sha256": "7302a74a40f6af165037a851ced7fef0abd403a328a0a23c0d3d673ed111854a"
+  },
+  "upgrade": {
+    "verified": true,
+    "source": "/Users/wilson/ALL/For AGI/义乌跨境电商供应链管理Agent助手/.local/m5-development/development-final/runs/dev-a35270678603d0b9/business/inventory.db",
+    "preserved_tables": 82,
+    "added_tables": 5,
+    "versions": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "migration_idempotent": true,
+    "restore_verified": true,
+    "sessions_invalidated": true,
+    "backup_sha256": "68b04c99c6a9943cf138845081ae2348e51081636a1e465df08c892f99cf46ea",
+    "upgraded_backup_sha256": "d0acf283ce0624ec7f759c350f0ebf4d526586b52d0c4260228ad8bd3e07ccfd",
+    "evidence": ".local/m6-development/upgrade-final/report.json",
+    "sha256": "bda56bb5af7937fe77e5a1b43ccd01ab195e8915b541511a2eaad9dcc07e06aa"
+  },
+  "retained_regression": [
+    {
+      "passed": 20,
+      "failed": 0,
+      "seeds": [
+        960010,
+        960011,
+        960012,
+        960013,
+        960014,
+        960015,
+        960016,
+        960017,
+        960018,
+        960019,
+        960020,
+        960021,
+        960022,
+        960023,
+        960024,
+        960025,
+        960026,
+        960027,
+        960028,
+        960029
+      ],
+      "evidence": ".local/m6-development/retained-regression-final/archives/m6-0080af143db7771c/report.json",
+      "sha256": "c9019ecf64312dc28d8b746a5f5d624fdfdfe0efc23775f7cfe3f402b241660b"
+    }
+  ],
+  "early_development": [
+    {
+      "name": "probe-a",
+      "reason": "Outer sandbox blocked isolated workers",
+      "passed": 0,
+      "failed": 12,
+      "failed_cases": [
+        {
+          "run_id": "dev-1eeb14ebb557d426",
+          "seed": 960010,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-b6970b958b474a5b",
+          "seed": 960011,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-7ea86f8fa73a6940",
+          "seed": 960012,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-1e680072718b7e25",
+          "seed": 960013,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-c74b01c0518d4e75",
+          "seed": 960014,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-c8abbe4d44a7d7d7",
+          "seed": 960015,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-9885e737aee180c8",
+          "seed": 960016,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-386e30b020d2bff3",
+          "seed": 960017,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-1627aad6f58bb859",
+          "seed": 960018,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-1fdfe4a492ea1b89",
+          "seed": 960019,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-d731ec9445632269",
+          "seed": 960020,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        },
+        {
+          "run_id": "dev-88af933386754ff9",
+          "seed": 960021,
+          "error": "Worker exited before acknowledging the attempt",
+          "failures": null
+        }
+      ],
+      "evidence": ".local/m6-development/probe-a/archives/m6-f9d09f329ef09bd5/report.json",
+      "sha256": "f955d7281cf185a898c43f478dd131405d2f488a8c9c8b7d77fb629a2ea591f1"
+    },
+    {
+      "name": "probe-b",
+      "reason": "Invalid source clock incorrectly appeared as open transport",
+      "passed": 17,
+      "failed": 3,
+      "failed_cases": [
+        {
+          "run_id": "dev-b86879a0c4df8219",
+          "seed": 960017,
+          "error": null,
+          "failures": [
+            {
+              "name": "tenant-0:independent-diagnosis",
+              "passed": false
+            },
+            {
+              "name": "tenant-1:independent-diagnosis",
+              "passed": false
+            }
+          ]
+        },
+        {
+          "run_id": "dev-a67fc9e0f9ab603a",
+          "seed": 960019,
+          "error": null,
+          "failures": [
+            {
+              "name": "tenant-0:independent-diagnosis",
+              "passed": false
+            },
+            {
+              "name": "tenant-1:independent-diagnosis",
+              "passed": false
+            }
+          ]
+        },
+        {
+          "run_id": "dev-874c13b5b8d610de",
+          "seed": 960029,
+          "error": null,
+          "failures": [
+            {
+              "name": "tenant-0:independent-diagnosis",
+              "passed": false
+            },
+            {
+              "name": "tenant-1:independent-diagnosis",
+              "passed": false
+            }
+          ]
+        }
+      ],
+      "evidence": ".local/m6-development/probe-b/archives/m6-f8565a80728fee73/report.json",
+      "sha256": "ac78af2e34539f57c76bd3f0f71826ca3d2e9bb9dd80343ae4f8f145b957d938"
+    },
+    {
+      "name": "probe-c",
+      "reason": "Follow-up development verification",
+      "passed": 40,
+      "failed": 0,
+      "failed_cases": [],
+      "evidence": ".local/m6-development/probe-c/archives/m6-085e8b008a3f194e/report.json",
+      "sha256": "0fde3f5d0911cfb8b93cc742118f7f5aedb4d355da7a9827a171e5d638a1cba7"
+    }
+  ],
+  "early_browser": {
+    "reason": "Analyst navigation omitted review entry; fixed before final browser verification",
+    "evidence": ".local/m6-development/browser-a/report.json",
+    "sha256": "698af180743d4be2d4c08735903bba4820f26b2a46009d4ed053259b24a95b77"
+  },
+  "development": {
+    "root": ".local/m6-development/development-final",
+    "run_id": "dev-013eb0c441d28346",
+    "url": "http://127.0.0.1:8025/",
+    "username": "tenant-0-admin",
+    "password_location": "business/login.json; never included in release artifacts"
+  },
+  "limitations": [
+    "No real model calls, external connections or production deployment",
+    "Capacity: single-client SQLite confirmed/unallocated uniform orders only; no PostgreSQL capacity or mixed concurrent workload",
+    "Background analysis has durable lease recovery but no persistent scheduler daemon",
+    "Cross-batch causal edges and incomplete historical stock/time remain unknown",
+    "Current calendar supports weekdays and one shift, not holiday master data",
+    "M3-M6 use fresh reset runs; captured time-slice replay unavailable",
+    "Model rate limiting is process-local",
+    "GitHub CI has not run remotely"
+  ]
+}

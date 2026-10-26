@@ -270,7 +270,7 @@ def main():
     if len(sys.argv)>2 and sys.argv[2]=='--serve':
         import uvicorn
         from app.main import create_app
-        try: uvicorn.run(create_app(driver.engine),host='127.0.0.1',port=int(sys.argv[3]),log_level='warning')
+        try: uvicorn.run(create_app(driver.engine,review_worker_enabled=True),host='127.0.0.1',port=int(sys.argv[3]),log_level='warning')
         finally: driver.close()
         return
     try:
@@ -282,11 +282,54 @@ def main():
                 op=request['operation']
                 try:
                     if op=='initialize': response=driver.initialize(request['masters'])
+                    elif op=='review_queue_fixture':
+                        from .review_queue_workload import fixture
+                        response=fixture(driver,request['master'])
+                    elif op=='review_queue_crash':
+                        from .review_queue_workload import crash
+                        response=crash(driver,request['identity'])
+                    elif op=='review_queue_recover':
+                        from .review_queue_workload import recover
+                        response=recover(driver,request['master'],request['identities'])
                     elif op=='advance': response={'clock':driver.advance(request['target'])}
                     elif op=='deliver': response=driver.deliver(request['event'],request.get('fault'))
                     elif op=='m3':
                         from .m3_workload import execute
                         response=execute(driver,request['masters'],request['case'])
+                    elif op=='m4':
+                        from .m4_workload import execute
+                        response=execute(driver,request['masters'],request['case'])
+                    elif op=='m5':
+                        from .m5_workload import execute
+                        response=execute(driver,request['masters'],request['case'])
+                    elif op=='m6_capacity_populate':
+                        from .m6_performance import populate
+                        response=populate(driver,request['master'],request['offset'],request['count'])
+                    elif op=='m6_capacity_measure':
+                        from .m6_performance import measure
+                        response=measure(driver,request['master'],request['orders'])
+                    elif op=='m6':
+                        from .m6_workload import execute
+                        response=execute(driver,request['masters'],request['case'])
+                    elif op=='m6_report_crash':
+                        from .m6_workload import first_job
+                        first_job(driver,request['tenant_id']);os._exit(96)
+                    elif op=='m6_recover':
+                        from .m6_workload import recover
+                        response=recover(driver,request['masters'],request['case'])
+                    elif op=='m5_confirmation_crash':
+                        from .m5_workload import confirm_first
+                        confirm_first(driver,request['tenant_id']);os._exit(95)
+                    elif op=='m5_recover':
+                        from .m5_workload import recover
+                        response=recover(driver,request['masters'],request['case'])
+                    elif op=='m4_recover':
+                        from .m4_workload import recover
+                        response=recover(driver,request['masters'],request['case'])
+                    elif op=='m4_delivery_crash':
+                        from app import delivery
+                        delivery.tick(driver.engine,driver.actor(request['tenant_id']),lease_seconds=1,after_external=lambda _:os._exit(94))
+                        raise RuntimeError('Expected an external operation before crash')
                     elif op=='snapshot': response=driver.snapshot(request.get('permissions',True))
                     elif op=='probe': response=driver.probe(request.get('path'),request.get('schema'),request.get('expected_role'))
                     else: response=dict(error='UNKNOWN_OPERATION')

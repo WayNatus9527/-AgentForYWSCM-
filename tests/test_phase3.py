@@ -243,7 +243,7 @@ def test_phase_two_database_upgrades_without_losing_records(env):
         conn.execute(versions.delete().where(versions.c.version==3))
     migrate(engine);migrate(engine)
     assert counts(engine)==before and balance(engine)==stock
-    with engine.connect() as conn:assert list(conn.execute(select(versions.c.version).order_by(versions.c.version)).scalars())==[1,2,3,4,5,6]
+    with engine.connect() as conn:assert list(conn.execute(select(versions.c.version).order_by(versions.c.version)).scalars())==[1,2,3,4,5,6,7,8,9,10]
 
 def test_complete_purchase_transfer_sale_return_quality_flow(env):
     engine,c=env

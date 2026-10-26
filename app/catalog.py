@@ -76,7 +76,7 @@ def _audit(c, actor, action, target, before, after):
 
 def _read(c, actor):
     accounts.assert_current(c, actor)
-    require_role(actor, 'admin', 'warehouse', 'cashier')
+    require_role(actor, 'admin', 'warehouse', 'cashier', 'operations', 'analyst')
 
 
 def _paginate(c, query, limit, offset):

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "跨境电商供应链管理Agent助手",
-    "version": "0.7.0"
+    "version": "0.10.1"
   },
   "paths": {
     "/api/v1/session": {
@@ -612,7 +612,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Purchase"
+                "$ref": "#/components/schemas/app__phase2__Purchase"
               }
             }
           }
@@ -864,7 +864,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Review"
+                "$ref": "#/components/schemas/app__phase2__Review"
               }
             }
           }
@@ -943,7 +943,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Transfer"
+                "$ref": "#/components/schemas/app__phase3__Transfer"
               }
             }
           }
@@ -1117,7 +1117,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Review"
+                "$ref": "#/components/schemas/app__phase2__Review"
               }
             }
           }
@@ -1573,7 +1573,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Ask"
+                "$ref": "#/components/schemas/app__phase4__Ask"
               }
             }
           },
@@ -3138,7 +3138,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Cancel"
+                "$ref": "#/components/schemas/app__v2__Cancel"
               }
             }
           }
@@ -3419,7 +3419,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Action"
+                "$ref": "#/components/schemas/app__m3_models__Action"
               }
             }
           }
@@ -3847,7 +3847,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Action"
+                "$ref": "#/components/schemas/app__m3_models__Action"
               }
             }
           }
@@ -4119,7 +4119,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Action"
+                "$ref": "#/components/schemas/app__m3_models__Action"
               }
             }
           }
@@ -4317,6 +4317,2910 @@
         }
       }
     },
+    "/api/v2/orders": {
+      "get": {
+        "summary": "Orders",
+        "operationId": "orders_api_v2_orders_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Order",
+        "operationId": "create_order_api_v2_orders_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}": {
+      "get": {
+        "summary": "Order",
+        "operationId": "order_api_v2_orders__identity__get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}/confirm": {
+      "post": {
+        "summary": "Order Confirm",
+        "operationId": "order_confirm_api_v2_orders__identity__confirm_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m4_models__Action"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}/allocate": {
+      "post": {
+        "summary": "Order Allocate",
+        "operationId": "order_allocate_api_v2_orders__identity__allocate_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Allocate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}/cancel": {
+      "post": {
+        "summary": "Order Cancel",
+        "operationId": "order_cancel_api_v2_orders__identity__cancel_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m4_models__Cancel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}/ship": {
+      "post": {
+        "summary": "Order Ship",
+        "operationId": "order_ship_api_v2_orders__identity__ship_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Ship"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}/start": {
+      "post": {
+        "summary": "Order Start",
+        "operationId": "order_start_api_v2_orders__identity__start_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}/complete": {
+      "post": {
+        "summary": "Order Complete",
+        "operationId": "order_complete_api_v2_orders__identity__complete_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}/link": {
+      "post": {
+        "summary": "Order Link",
+        "operationId": "order_link_api_v2_orders__identity__link_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Supply"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/orders/{identity}/release": {
+      "post": {
+        "summary": "Order Release",
+        "operationId": "order_release_api_v2_orders__identity__release_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Release"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connections": {
+      "get": {
+        "summary": "Connections",
+        "operationId": "connections_api_v2_connections_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Connection",
+        "operationId": "create_connection_api_v2_connections_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Connection"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connections/{identity}": {
+      "post": {
+        "summary": "Edit Connection",
+        "operationId": "edit_connection_api_v2_connections__identity__post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connections/{identity}/events": {
+      "post": {
+        "summary": "Receive",
+        "operationId": "receive_api_v2_connections__identity__events_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Envelope"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connections/{identity}/source-facts": {
+      "post": {
+        "summary": "Source Fact",
+        "operationId": "source_fact_api_v2_connections__identity__source_facts_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Envelope"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connector-records/{kind}": {
+      "get": {
+        "summary": "Records",
+        "operationId": "records_api_v2_connector_records__kind__get",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "inbox",
+                "outbox",
+                "snapshots",
+                "reconciliations"
+              ],
+              "type": "string",
+              "title": "Kind"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/inbox/{identity}/{action}": {
+      "post": {
+        "summary": "Process",
+        "operationId": "process_api_v2_inbox__identity___action__post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "process",
+                "verify"
+              ],
+              "type": "string",
+              "title": "Action"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/outbox/dispatch": {
+      "post": {
+        "summary": "Dispatch",
+        "operationId": "dispatch_api_v2_outbox_dispatch_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/outbox/{identity}/retry": {
+      "post": {
+        "summary": "Retry",
+        "operationId": "retry_api_v2_outbox__identity__retry_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m4_api__Retry"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connections/{identity}/snapshots": {
+      "post": {
+        "summary": "Snapshot",
+        "operationId": "snapshot_api_v2_connections__identity__snapshots_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Snapshot"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/snapshots/{identity}/compare": {
+      "post": {
+        "summary": "Compare",
+        "operationId": "compare_api_v2_snapshots__identity__compare_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-orders/{kind}": {
+      "get": {
+        "summary": "Orders",
+        "operationId": "orders_api_v2_supply_orders__kind__get",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "purchase",
+                "transfer"
+              ],
+              "type": "string",
+              "title": "Kind"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/purchase-plans": {
+      "post": {
+        "summary": "Purchase",
+        "operationId": "purchase_api_v2_purchase_plans_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m5_models__Purchase"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/transfer-plans": {
+      "post": {
+        "summary": "Transfer",
+        "operationId": "transfer_api_v2_transfer_plans_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m5_models__Transfer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/purchase-plans/{identity}/promise": {
+      "post": {
+        "summary": "Promise",
+        "operationId": "promise_api_v2_purchase_plans__identity__promise_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Promise"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/purchase-plans/scan-delays": {
+      "post": {
+        "summary": "Scan Delays",
+        "operationId": "scan_delays_api_v2_purchase_plans_scan_delays_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-orders/{kind}/{identity}/batches": {
+      "post": {
+        "summary": "Batch",
+        "operationId": "batch_api_v2_supply_orders__kind___identity__batches_post",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "purchase",
+                "transfer"
+              ],
+              "type": "string",
+              "title": "Kind"
+            }
+          },
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Batch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-orders/{kind}/{identity}/close": {
+      "post": {
+        "summary": "Close",
+        "operationId": "close_api_v2_supply_orders__kind___identity__close_post",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "purchase",
+                "transfer"
+              ],
+              "type": "string",
+              "title": "Kind"
+            }
+          },
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m5_models__Action"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-batches/{identity}/ship": {
+      "post": {
+        "summary": "Supply Batch Ship",
+        "operationId": "supply_batch_ship_api_v2_supply_batches__identity__ship_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchShip"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-batches/{identity}/receive": {
+      "post": {
+        "summary": "Supply Batch Receive",
+        "operationId": "supply_batch_receive_api_v2_supply_batches__identity__receive_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchReceive"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-batches/{identity}/cancel": {
+      "post": {
+        "summary": "Supply Batch Cancel",
+        "operationId": "supply_batch_cancel_api_v2_supply_batches__identity__cancel_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchCancel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-batches/{identity}/discrepancy": {
+      "post": {
+        "summary": "Discrepancy",
+        "operationId": "discrepancy_api_v2_supply_batches__identity__discrepancy_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Claim"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-discrepancies/{identity}/review": {
+      "post": {
+        "summary": "Review",
+        "operationId": "review_api_v2_supply_discrepancies__identity__review_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m5_models__Review"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/supply-receipts/{identity}/inspect": {
+      "post": {
+        "summary": "Inspect",
+        "operationId": "inspect_api_v2_supply_receipts__identity__inspect_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Inspect"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/planning/{kind}": {
+      "get": {
+        "summary": "Listing",
+        "operationId": "listing_api_v2_planning__kind__get",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "policies",
+                "plans",
+                "demand"
+              ],
+              "type": "string",
+              "title": "Kind"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/planning/demand": {
+      "post": {
+        "summary": "Demand",
+        "operationId": "demand_api_v2_planning_demand_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Demand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/planning/policies": {
+      "post": {
+        "summary": "Policy",
+        "operationId": "policy_api_v2_planning_policies_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Policy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/planning/policies/{identity}/calculate": {
+      "post": {
+        "summary": "Calculate",
+        "operationId": "calculate_api_v2_planning_policies__identity__calculate_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/planning/plans/{identity}/confirm": {
+      "post": {
+        "summary": "Confirm",
+        "operationId": "confirm_api_v2_planning_plans__identity__confirm_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Confirm"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/review-agent/status": {
+      "get": {
+        "summary": "Model Status",
+        "operationId": "model_status_api_v2_review_agent_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/jobs": {
+      "post": {
+        "summary": "Create",
+        "operationId": "create_api_v2_reviews_jobs_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Analyze"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Jobs",
+        "operationId": "jobs_api_v2_reviews_jobs_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/worker-status": {
+      "get": {
+        "summary": "Worker Status",
+        "operationId": "worker_status_api_v2_reviews_worker_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/jobs/{identity}/retry": {
+      "post": {
+        "summary": "Retry",
+        "operationId": "retry_api_v2_reviews_jobs__identity__retry_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m6_models__Retry"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/jobs/{identity}/history": {
+      "get": {
+        "summary": "History",
+        "operationId": "history_api_v2_reviews_jobs__identity__history_get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/jobs/{identity}": {
+      "get": {
+        "summary": "Job",
+        "operationId": "job_api_v2_reviews_jobs__identity__get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/reports": {
+      "get": {
+        "summary": "Reports",
+        "operationId": "reports_api_v2_reviews_reports_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/reports/{identity}": {
+      "get": {
+        "summary": "Report",
+        "operationId": "report_api_v2_reviews_reports__identity__get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/reports/{identity}/rows/{category}": {
+      "get": {
+        "summary": "Rows",
+        "operationId": "rows_api_v2_reviews_reports__identity__rows__category__get",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "sample",
+                "candidate",
+                "impact",
+                "event",
+                "input"
+              ],
+              "type": "string",
+              "title": "Category"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "object_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Object Id"
+            }
+          },
+          {
+            "name": "metric",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Metric"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/rows/{identity}/improve": {
+      "post": {
+        "summary": "Improve",
+        "operationId": "improve_api_v2_reviews_rows__identity__improve_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Improvement"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/events/{identity}/correct": {
+      "post": {
+        "summary": "Correct",
+        "operationId": "correct_api_v2_reviews_events__identity__correct_post",
+        "parameters": [
+          {
+            "name": "identity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identity"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Correct"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reviews/compare": {
+      "get": {
+        "summary": "Compare",
+        "operationId": "compare_api_v2_reviews_compare_get",
+        "parameters": [
+          {
+            "name": "before",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Before"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "After"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/review-agent/tools": {
+      "post": {
+        "summary": "Tool",
+        "operationId": "tool_api_v2_review_agent_tools_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tool"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/review-agent/ask": {
+      "post": {
+        "summary": "Ask",
+        "operationId": "ask_api_v2_review_agent_ask_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 120,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__m6_models__Ask"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "summary": "Index",
@@ -4336,29 +7240,6 @@
   },
   "components": {
     "schemas": {
-      "Action": {
-        "properties": {
-          "expected_version": {
-            "type": "integer",
-            "maximum": 1000000.0,
-            "minimum": 0.0,
-            "title": "Expected Version"
-          },
-          "reason": {
-            "type": "string",
-            "maxLength": 1000,
-            "minLength": 2,
-            "title": "Reason"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "expected_version",
-          "reason"
-        ],
-        "title": "Action"
-      },
       "Adjustment": {
         "properties": {
           "kind": {
@@ -4406,23 +7287,36 @@
         ],
         "title": "Adjustment"
       },
-      "Ask": {
+      "Allocate": {
         "properties": {
-          "mode": {
-            "type": "string",
-            "enum": [
-              "model",
-              "inventory",
-              "issues"
-            ],
-            "title": "Mode",
-            "default": "model"
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version"
           },
-          "question": {
+          "action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Action Id"
+          },
+          "reason": {
             "type": "string",
             "maxLength": 1000,
-            "title": "Question",
-            "default": ""
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "line_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Line Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
           },
           "warehouse_id": {
             "anyOf": [
@@ -4435,6 +7329,39 @@
                 "type": "null"
               }
             ],
+            "title": "Warehouse Id"
+          },
+          "grant_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grant Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "action_id",
+          "reason",
+          "line_id",
+          "quantity"
+        ],
+        "title": "Allocate"
+      },
+      "Analyze": {
+        "properties": {
+          "warehouse_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
             "title": "Warehouse Id"
           },
           "sku_id": {
@@ -4450,21 +7377,85 @@
             ],
             "title": "Sku Id"
           },
-          "issue": {
-            "type": "string",
-            "enum": [
-              "all",
-              "low_stock",
-              "pending_quality",
-              "in_transit"
+          "supplier_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
             ],
-            "title": "Issue",
-            "default": "all"
+            "title": "Supplier Id"
+          },
+          "connection_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Connection Id"
+          },
+          "start_at": {
+            "type": "string",
+            "title": "Start At"
+          },
+          "end_at": {
+            "type": "string",
+            "title": "End At"
+          },
+          "waiting_hours": {
+            "type": "integer",
+            "maximum": 8760.0,
+            "minimum": 1.0,
+            "title": "Waiting Hours",
+            "default": 24
+          },
+          "registration_hours": {
+            "type": "integer",
+            "maximum": 8760.0,
+            "minimum": 1.0,
+            "title": "Registration Hours",
+            "default": 24
+          },
+          "min_samples": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Min Samples",
+            "default": 5
+          },
+          "calendar": {
+            "$ref": "#/components/schemas/Calendar",
+            "default": {
+              "version": "shift-v1",
+              "weekdays": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ],
+              "start_hour": 9,
+              "end_hour": 18
+            }
           }
         },
         "additionalProperties": false,
         "type": "object",
-        "title": "Ask"
+        "required": [
+          "warehouse_id",
+          "start_at",
+          "end_at"
+        ],
+        "title": "Analyze"
       },
       "Assign": {
         "properties": {
@@ -4496,13 +7487,31 @@
         ],
         "title": "Assign"
       },
-      "Cancel": {
+      "Batch": {
         "properties": {
-          "action_id": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "reference": {
             "type": "string",
             "maxLength": 120,
             "minLength": 1,
-            "title": "Action Id"
+            "title": "Reference"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "supply_line_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Supply Line Id"
           },
           "quantity": {
             "type": "integer",
@@ -4510,42 +7519,353 @@
             "minimum": 1.0,
             "title": "Quantity"
           },
-          "reason": {
-            "type": "string",
-            "maxLength": 120,
-            "minLength": 1,
-            "title": "Reason"
+          "carrier": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Carrier"
           },
-          "grant_version": {
-            "type": "integer",
-            "maximum": 1000000.0,
-            "minimum": 0.0,
-            "title": "Grant Version"
+          "transport_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transport Mode"
           },
-          "expected_version": {
-            "type": "integer",
-            "maximum": 1000000.0,
-            "minimum": 0.0,
-            "title": "Expected Version"
+          "tracking_number": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracking Number"
           },
-          "reservation_version": {
-            "type": "integer",
-            "maximum": 1000000.0,
-            "minimum": 0.0,
-            "title": "Reservation Version"
+          "planned_ship_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned Ship At"
+          },
+          "expected_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected At"
+          },
+          "expected_balance_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Balance Version"
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "action_id",
-          "quantity",
-          "reason",
-          "grant_version",
           "expected_version",
-          "reservation_version"
+          "reference",
+          "reason",
+          "supply_line_id",
+          "quantity"
         ],
-        "title": "Cancel"
+        "title": "Batch"
+      },
+      "BatchCancel": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "expected_balance_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Balance Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "reference",
+          "reason"
+        ],
+        "title": "BatchCancel"
+      },
+      "BatchReceive": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "g": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "G",
+            "default": 0
+          },
+          "q": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Q",
+            "default": 0
+          },
+          "d": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "D",
+            "default": 0
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred At"
+          },
+          "expected_balance_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Expected Balance Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "reference",
+          "reason",
+          "expected_balance_version"
+        ],
+        "title": "BatchReceive"
+      },
+      "BatchShip": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred At"
+          },
+          "expected_balance_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Balance Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "reference",
+          "reason"
+        ],
+        "title": "BatchShip"
+      },
+      "Calendar": {
+        "properties": {
+          "version": {
+            "type": "string",
+            "const": "shift-v1",
+            "title": "Version",
+            "default": "shift-v1"
+          },
+          "weekdays": {
+            "items": {
+              "type": "integer",
+              "maximum": 6.0,
+              "minimum": 0.0
+            },
+            "type": "array",
+            "maxItems": 7,
+            "minItems": 1,
+            "title": "Weekdays",
+            "default": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "start_hour": {
+            "type": "integer",
+            "maximum": 23.0,
+            "minimum": 0.0,
+            "title": "Start Hour",
+            "default": 9
+          },
+          "end_hour": {
+            "type": "integer",
+            "maximum": 24.0,
+            "minimum": 1.0,
+            "title": "End Hour",
+            "default": 18
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Calendar"
+      },
+      "Claim": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "shortage",
+              "refused",
+              "damaged"
+            ],
+            "title": "Kind"
+          },
+          "details": {
+            "$ref": "#/components/schemas/Details"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "reference",
+          "reason",
+          "quantity",
+          "kind",
+          "details"
+        ],
+        "title": "Claim"
       },
       "Close": {
         "properties": {
@@ -4570,6 +7890,29 @@
         ],
         "title": "Close"
       },
+      "Confirm": {
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Quantity"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "quantity",
+          "reason"
+        ],
+        "title": "Confirm"
+      },
       "ConfirmDraft": {
         "properties": {
           "confirmation_token": {
@@ -4585,6 +7928,150 @@
           "confirmation_token"
         ],
         "title": "ConfirmDraft"
+      },
+      "Connection": {
+        "properties": {
+          "source_account": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Account"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "warehouse_ids": {
+            "items": {
+              "type": "string",
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "array",
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Warehouse Ids"
+          },
+          "member_ids": {
+            "items": {
+              "type": "string",
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Member Ids",
+            "default": []
+          },
+          "supports_query": {
+            "type": "boolean",
+            "title": "Supports Query",
+            "default": true
+          },
+          "supports_idempotency": {
+            "type": "boolean",
+            "title": "Supports Idempotency",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source_account",
+          "name",
+          "warehouse_ids"
+        ],
+        "title": "Connection"
+      },
+      "ConnectionUpdate": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "member_ids": {
+            "items": {
+              "type": "string",
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Member Ids"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "member_ids",
+          "active"
+        ],
+        "title": "ConnectionUpdate"
+      },
+      "Correct": {
+        "properties": {
+          "expected_event_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Expected Event Id"
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred At"
+          },
+          "planned_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned At"
+          },
+          "time_quality": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "reported",
+              "verified"
+            ],
+            "title": "Time Quality"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_event_id",
+          "occurred_at",
+          "planned_at",
+          "time_quality",
+          "reason"
+        ],
+        "title": "Correct"
       },
       "CountCreate": {
         "properties": {
@@ -4763,6 +8250,58 @@
         "additionalProperties": false,
         "type": "object",
         "title": "Delta"
+      },
+      "Demand": {
+        "properties": {
+          "warehouse_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Warehouse Id"
+          },
+          "sku_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Sku Id"
+          },
+          "day": {
+            "type": "string",
+            "title": "Day"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Quantity"
+          },
+          "quality": {
+            "type": "string",
+            "enum": [
+              "known",
+              "unknown",
+              "abnormal"
+            ],
+            "title": "Quality",
+            "default": "known"
+          },
+          "source_reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Reference"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "warehouse_id",
+          "sku_id",
+          "day",
+          "quantity",
+          "source_reference"
+        ],
+        "title": "Demand"
       },
       "Details": {
         "properties": {
@@ -4985,7 +8524,9 @@
             "enum": [
               "admin",
               "warehouse",
-              "cashier"
+              "cashier",
+              "operations",
+              "analyst"
             ],
             "title": "Role"
           },
@@ -5020,6 +8561,118 @@
           "expected_version"
         ],
         "title": "EditAccount"
+      },
+      "Envelope": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Run Id"
+          },
+          "tenant_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Tenant Id"
+          },
+          "source_event_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Event Id"
+          },
+          "business_action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Business Action Id"
+          },
+          "entity_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Entity Id"
+          },
+          "source_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Version"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "order.created",
+              "order.cancelled",
+              "order.completed",
+              "shipment.delivered",
+              "stock.delta"
+            ],
+            "title": "Kind"
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred At"
+          },
+          "warehouse_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warehouse Id"
+          },
+          "sku_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku Id"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "run_id",
+          "tenant_id",
+          "source_event_id",
+          "business_action_id",
+          "entity_id",
+          "source_version",
+          "kind",
+          "payload"
+        ],
+        "title": "Envelope"
       },
       "ExceptionCreate": {
         "properties": {
@@ -5240,6 +8893,56 @@
         ],
         "title": "ImportPreview"
       },
+      "Improvement": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "Improvement"
+      },
+      "Inspect": {
+        "properties": {
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          },
+          "expected_balance_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Expected Balance Version"
+          },
+          "details": {
+            "$ref": "#/components/schemas/Details"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reference",
+          "quantity",
+          "expected_balance_version",
+          "details"
+        ],
+        "title": "Inspect"
+      },
       "Inspection": {
         "properties": {
           "reference": {
@@ -5455,6 +9158,29 @@
         ],
         "title": "InspectionStart"
       },
+      "Line": {
+        "properties": {
+          "sku_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Sku Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "sku_id",
+          "quantity"
+        ],
+        "title": "Line"
+      },
       "Login": {
         "properties": {
           "username": {
@@ -5491,7 +9217,9 @@
             "enum": [
               "admin",
               "warehouse",
-              "cashier"
+              "cashier",
+              "operations",
+              "analyst"
             ],
             "title": "Role"
           },
@@ -5560,7 +9288,104 @@
         ],
         "title": "Observed"
       },
-      "Purchase": {
+      "OrderCreate": {
+        "properties": {
+          "connection_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Connection Id"
+          },
+          "source_order_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Order Id"
+          },
+          "warehouse_ids": {
+            "items": {
+              "type": "string",
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "array",
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Warehouse Ids"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/OrderLine"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Lines"
+          },
+          "planned_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned At"
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "connection_id",
+          "source_order_id",
+          "warehouse_ids",
+          "lines"
+        ],
+        "title": "OrderCreate"
+      },
+      "OrderLine": {
+        "properties": {
+          "source_line_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Line Id"
+          },
+          "sku_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Sku Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source_line_id",
+          "sku_id",
+          "quantity"
+        ],
+        "title": "OrderLine"
+      },
+      "Policy": {
         "properties": {
           "warehouse_id": {
             "type": "string",
@@ -5568,43 +9393,135 @@
             "minLength": 1,
             "title": "Warehouse Id"
           },
-          "code": {
+          "sku_id": {
             "type": "string",
             "maxLength": 120,
             "minLength": 1,
-            "title": "Code"
+            "title": "Sku Id"
           },
-          "supplier": {
+          "supplier_id": {
             "type": "string",
             "maxLength": 120,
             "minLength": 1,
-            "title": "Supplier"
+            "title": "Supplier Id"
           },
-          "note": {
-            "type": "string",
-            "maxLength": 500,
-            "title": "Note",
-            "default": ""
+          "window_days": {
+            "type": "integer",
+            "maximum": 90.0,
+            "minimum": 1.0,
+            "title": "Window Days"
           },
-          "lines": {
-            "items": {
-              "$ref": "#/components/schemas/PurchaseLine"
-            },
-            "type": "array",
-            "maxItems": 100,
-            "minItems": 1,
-            "title": "Lines"
+          "coverage_days": {
+            "type": "integer",
+            "maximum": 90.0,
+            "minimum": 1.0,
+            "title": "Coverage Days"
+          },
+          "lead_days": {
+            "type": "integer",
+            "maximum": 365.0,
+            "minimum": 0.0,
+            "title": "Lead Days"
+          },
+          "safety": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Safety",
+            "default": 0
+          },
+          "minimum": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Minimum",
+            "default": 1
+          },
+          "pack": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Pack",
+            "default": 1
+          },
+          "max_daily": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Max Daily",
+            "default": 1000000
+          },
+          "includes_open_orders": {
+            "type": "boolean",
+            "title": "Includes Open Orders",
+            "default": true
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": true
+          },
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Expected Version",
+            "default": 0
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
           "warehouse_id",
-          "code",
-          "supplier",
-          "lines"
+          "sku_id",
+          "supplier_id",
+          "window_days",
+          "coverage_days",
+          "lead_days"
         ],
-        "title": "Purchase"
+        "title": "Policy"
+      },
+      "Promise": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "promised_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promised At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "reference",
+          "reason",
+          "promised_at"
+        ],
+        "title": "Promise"
       },
       "PurchaseLine": {
         "properties": {
@@ -5705,6 +9622,49 @@
           "g"
         ],
         "title": "ReceiveLine"
+      },
+      "Release": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Action Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "link_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Link Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "action_id",
+          "reason",
+          "link_id",
+          "quantity"
+        ],
+        "title": "Release"
       },
       "Reserve": {
         "properties": {
@@ -5864,31 +9824,6 @@
         ],
         "title": "Reversal"
       },
-      "Review": {
-        "properties": {
-          "decision": {
-            "type": "string",
-            "enum": [
-              "approve",
-              "reject"
-            ],
-            "title": "Decision"
-          },
-          "note": {
-            "type": "string",
-            "maxLength": 500,
-            "minLength": 2,
-            "title": "Note"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "decision",
-          "note"
-        ],
-        "title": "Review"
-      },
       "SKU": {
         "properties": {
           "code": {
@@ -6002,6 +9937,138 @@
         ],
         "title": "Scrap"
       },
+      "Ship": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Action Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "batch_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Batch Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurred At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "action_id",
+          "reason",
+          "batch_id",
+          "quantity",
+          "reference"
+        ],
+        "title": "Ship"
+      },
+      "Snapshot": {
+        "properties": {
+          "snapshot_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Snapshot Id"
+          },
+          "warehouse_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Warehouse Id"
+          },
+          "sku_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Sku Id"
+          },
+          "covered_watermark": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Covered Watermark"
+          },
+          "snapshot_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot At"
+          },
+          "quantities": {
+            "additionalProperties": {
+              "type": "integer",
+              "maximum": 1000000.0,
+              "minimum": 0.0
+            },
+            "propertyNames": {
+              "enum": [
+                "g",
+                "q",
+                "d"
+              ]
+            },
+            "type": "object",
+            "title": "Quantities"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "snapshot_id",
+          "warehouse_id",
+          "sku_id",
+          "covered_watermark",
+          "quantities"
+        ],
+        "title": "Snapshot"
+      },
       "StockVersion": {
         "properties": {
           "sku_id": {
@@ -6024,6 +10091,111 @@
           "expected_version"
         ],
         "title": "StockVersion"
+      },
+      "Supply": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Action Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "line_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Line Id"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "purchase_line",
+              "transfer_line",
+              "inspection"
+            ],
+            "title": "Source Type"
+          },
+          "source_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "action_id",
+          "reason",
+          "line_id",
+          "source_type",
+          "source_id",
+          "quantity"
+        ],
+        "title": "Supply"
+      },
+      "TaskAction": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Action Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "batch_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Batch Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "pick",
+              "review"
+            ],
+            "title": "Kind"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "action_id",
+          "reason",
+          "batch_id",
+          "kind"
+        ],
+        "title": "TaskAction"
       },
       "TaskReview": {
         "properties": {
@@ -6053,52 +10225,40 @@
         ],
         "title": "TaskReview"
       },
-      "Transfer": {
+      "Tool": {
         "properties": {
-          "code": {
+          "tool": {
             "type": "string",
-            "maxLength": 120,
-            "minLength": 1,
-            "title": "Code"
+            "enum": [
+              "explain_report",
+              "explain_replenishment",
+              "track_purchase",
+              "calculate_replenishment",
+              "clarify",
+              "unsupported"
+            ],
+            "title": "Tool"
           },
-          "warehouse_id": {
-            "type": "string",
-            "maxLength": 120,
-            "minLength": 1,
-            "title": "Warehouse Id"
-          },
-          "destination_id": {
-            "type": "string",
-            "maxLength": 120,
-            "minLength": 1,
-            "title": "Destination Id"
-          },
-          "reason": {
-            "type": "string",
-            "maxLength": 500,
-            "minLength": 2,
-            "title": "Reason"
-          },
-          "lines": {
-            "items": {
-              "$ref": "#/components/schemas/PurchaseLine"
-            },
-            "type": "array",
-            "maxItems": 100,
-            "minItems": 1,
-            "title": "Lines"
+          "identity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Identity"
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "code",
-          "warehouse_id",
-          "destination_id",
-          "reason",
-          "lines"
+          "tool"
         ],
-        "title": "Transfer"
+        "title": "Tool"
       },
       "TransferAction": {
         "properties": {
@@ -6261,6 +10421,29 @@
         ],
         "title": "Withdraw"
       },
+      "app__m3_models__Action": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "reason"
+        ],
+        "title": "Action"
+      },
       "app__m3_models__SupplierReturn": {
         "properties": {
           "kind": {
@@ -6321,6 +10504,372 @@
           "details"
         ],
         "title": "SupplierReturn"
+      },
+      "app__m4_api__Retry": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "Retry"
+      },
+      "app__m4_models__Action": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Action Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "action_id",
+          "reason"
+        ],
+        "title": "Action"
+      },
+      "app__m4_models__Cancel": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Action Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "line_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Line Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          },
+          "batch_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Batch Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "action_id",
+          "reason",
+          "line_id",
+          "quantity"
+        ],
+        "title": "Cancel"
+      },
+      "app__m5_models__Action": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "reference",
+          "reason"
+        ],
+        "title": "Action"
+      },
+      "app__m5_models__Purchase": {
+        "properties": {
+          "warehouse_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Warehouse Id"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Code"
+          },
+          "supplier_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Supplier Id"
+          },
+          "replacement_return_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replacement Return Id"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Note",
+            "default": ""
+          },
+          "ordered_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ordered At"
+          },
+          "promised_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promised At"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/Line"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Lines"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "warehouse_id",
+          "code",
+          "supplier_id",
+          "lines"
+        ],
+        "title": "Purchase"
+      },
+      "app__m5_models__Review": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reference"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject"
+            ],
+            "title": "Decision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version",
+          "reference",
+          "reason",
+          "decision"
+        ],
+        "title": "Review"
+      },
+      "app__m5_models__Transfer": {
+        "properties": {
+          "warehouse_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Warehouse Id"
+          },
+          "destination_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Destination Id"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Code"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "expected_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected At"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/Line"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Lines"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "warehouse_id",
+          "destination_id",
+          "code",
+          "reason",
+          "lines"
+        ],
+        "title": "Transfer"
+      },
+      "app__m6_models__Ask": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Question"
+          },
+          "selected_tool": {
+            "type": "string",
+            "enum": [
+              "explain_report",
+              "explain_replenishment",
+              "track_purchase",
+              "calculate_replenishment"
+            ],
+            "title": "Selected Tool"
+          },
+          "identity": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Identity"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "question",
+          "selected_tool",
+          "identity"
+        ],
+        "title": "Ask"
+      },
+      "app__m6_models__Retry": {
+        "properties": {
+          "expected_attempts": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Expected Attempts"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_attempts",
+          "reason"
+        ],
+        "title": "Retry"
       },
       "app__main__Receipt": {
         "properties": {
@@ -6436,6 +10985,77 @@
         ],
         "title": "Sale"
       },
+      "app__phase2__Purchase": {
+        "properties": {
+          "warehouse_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Warehouse Id"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Code"
+          },
+          "supplier": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Supplier"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Note",
+            "default": ""
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/PurchaseLine"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Lines"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "warehouse_id",
+          "code",
+          "supplier",
+          "lines"
+        ],
+        "title": "Purchase"
+      },
+      "app__phase2__Review": {
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject"
+            ],
+            "title": "Decision"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision",
+          "note"
+        ],
+        "title": "Review"
+      },
       "app__phase3__SupplierReturn": {
         "properties": {
           "kind": {
@@ -6509,6 +11129,164 @@
           "reason"
         ],
         "title": "SupplierReturn"
+      },
+      "app__phase3__Transfer": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Code"
+          },
+          "warehouse_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Warehouse Id"
+          },
+          "destination_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Destination Id"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Reason"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/PurchaseLine"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Lines"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "warehouse_id",
+          "destination_id",
+          "reason",
+          "lines"
+        ],
+        "title": "Transfer"
+      },
+      "app__phase4__Ask": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "model",
+              "inventory",
+              "issues"
+            ],
+            "title": "Mode",
+            "default": "model"
+          },
+          "question": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Question",
+            "default": ""
+          },
+          "warehouse_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warehouse Id"
+          },
+          "sku_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku Id"
+          },
+          "issue": {
+            "type": "string",
+            "enum": [
+              "all",
+              "low_stock",
+              "pending_quality",
+              "in_transit"
+            ],
+            "title": "Issue",
+            "default": "all"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Ask"
+      },
+      "app__v2__Cancel": {
+        "properties": {
+          "action_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Action Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Reason"
+          },
+          "grant_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Grant Version"
+          },
+          "expected_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Expected Version"
+          },
+          "reservation_version": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Reservation Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "action_id",
+          "quantity",
+          "reason",
+          "grant_version",
+          "expected_version",
+          "reservation_version"
+        ],
+        "title": "Cancel"
       },
       "app__v2__Receipt": {
         "properties": {

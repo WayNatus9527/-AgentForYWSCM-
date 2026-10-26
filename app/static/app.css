@@ -16,3 +16,15 @@ textarea{width:100%;padding:12px;border:1px solid #d9e2dc;border-radius:8px;font
 
 /* M3 evidence and long document identifiers stay within each card. */
 .m3-history,.m3-disposition{overflow-wrap:anywhere}.m3-disposition{padding:16px 0;border-bottom:1px solid var(--line,#e2e8e4)}.form-card>details{margin-top:16px}.form-card .action-buttons{flex-wrap:wrap}.form-card .card-head{gap:12px;flex-wrap:wrap}.sidebar{overflow-y:auto}
+.m4-batch{display:flex;justify-content:space-between;gap:18px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line,#e4e9e6);flex-wrap:wrap}
+.m4-batch .action-buttons{flex-wrap:wrap;max-width:100%}
+.m4-evidence{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-width:100%;max-height:360px;overflow:auto}
+.m4-batch small{overflow-wrap:anywhere}
+.sidebar [hidden]{display:none!important}
+.m4-connection>div{min-width:0;flex:1;overflow-wrap:anywhere}.m4-connection>button{flex-shrink:0}
+@media(max-width:600px){.m4-batch{display:block}.m4-batch .action-buttons{margin-top:12px}.m4-batch p{overflow-wrap:anywhere}}
+@media(max-width:600px){.m4-connection{flex-wrap:wrap;padding:18px 0}.m4-connection>div{flex-basis:100%}}
+.m5-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}.m5-facts p{font-size:12px;color:var(--muted);margin:0;padding:12px;background:#f5f8f2;border-radius:6px}.m5-facts strong{display:block;color:var(--ink);font-size:17px}.m5-batch,.m5-plan{padding:20px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}.m5-batch .card-head,.m5-plan .card-head{padding:8px 0;border:0}.m5-receipt{padding:16px;border:1px solid var(--line);border-radius:6px;margin:12px 0}.m5-quantity{font-size:24px;color:var(--green)}.m5-plan .table-wrap{max-width:100%}
+@media(max-width:600px){.m5-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.m5-facts strong{font-size:14px}.m5-receipt{padding:12px}}
+
+.m6-json{white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;font-size:12px;line-height:1.6;background:var(--bg);padding:16px;border-radius:10px}.m6-json+button{margin-top:12px}

@@ -123,10 +123,11 @@ def get_order(c,actor,order_id):
     return dict(row)
 
 def order_view(c,row):
+    from .supply import managed
     history=[dict(r) for r in c.execute(select(receipts).where(receipts.c.order_id==row['id'],receipts.c.tenant_id==row['tenant_id']).order_by(receipts.c.created_at)).mappings()]
     for receipt in history:
         receipt['reversed_document_ids']=list(c.execute(select(reversals.c.original_id).where(reversals.c.tenant_id==row['tenant_id'],reversals.c.original_id.in_(receipt['document_ids']))).scalars())
-    return {**row,'lines':[dict(r) for r in c.execute(select(lines).where(lines.c.order_id==row['id'])).mappings()], 'receipt_history':history}
+    return {**row,'managed_supply':managed(c,'purchase',row['id']),'lines':[dict(r) for r in c.execute(select(lines).where(lines.c.order_id==row['id'])).mappings()], 'receipt_history':history}
 
 def purchase_create(engine,actor,body,key):
     require_role(actor,'admin','warehouse')
@@ -147,6 +148,8 @@ def purchase_receive(engine,actor,order_id,body,key):
     require_role(actor,'admin','warehouse')
     def apply(c):
         order=get_order(c,actor,order_id)
+        from .supply import managed
+        if managed(c,'purchase',order_id):fail('MANAGED_SUPPLY','此采购由供给批次管理，请在采购计划中签收')
         if c.execute(select(receipts.c.id).where(receipts.c.tenant_id==actor['tenant_id'],receipts.c.order_id==order_id,receipts.c.reference==body['reference'])).first():fail('RECEIPT_EXISTS','该到货凭证已登记，请查看原收货记录，不能重复入账')
         if order['status'] not in ('open','partial'):fail('ORDER_CLOSED','采购单已完成或关闭')
         if order['version']!=body['expected_version']:fail('VERSION_CONFLICT','采购单已变化，请刷新后确认')
@@ -169,6 +172,8 @@ def purchase_close(engine,actor,order_id,body,key):
     require_role(actor,'admin','warehouse')
     def apply(c):
         row=get_order(c,actor,order_id)
+        from .supply import managed
+        if managed(c,'purchase',order_id):fail('MANAGED_SUPPLY','请在采购计划中关闭余量')
         if row['version']!=body['expected_version']:fail('VERSION_CONFLICT','采购单已变化')
         if row['status'] not in ('open','partial'):fail('ORDER_CLOSED','采购单已完成或关闭')
         c.execute(update(orders).where(orders.c.id==order_id).values(status='closed',close_reason=body['reason'],version=row['version']+1))
@@ -180,6 +185,12 @@ def original(c,actor,document_id):
     if not row:fail('NOT_FOUND','原单据不存在',404)
     get_warehouse(c,actor,row['warehouse_id'],True)
     if row['kind'] not in ('receipt','sale','purchase_receipt','adjustment'):fail('UNSUPPORTED_REVERSAL','此类单据不可冲正；期初数据须通过审批调整，冲正单不可再次冲正')
+    from .m4_schema import shipments
+    if c.scalar(select(shipments.c.id).where(shipments.c.document_id == document_id)):
+        fail('FULFILLMENT_RETURN_REQUIRED', '订单履约已发货须通过原单关联退货处理')
+    from .m5_schema import receipts as supply_receipts
+    if c.scalar(select(supply_receipts.c.id).where(supply_receipts.c.document_id==document_id)):
+        fail('SUPPLY_RETURN_REQUIRED','批次到货须通过关联退货或审批调整处理，不能通用冲正清除实收')
     if c.execute(select(reversals).where(reversals.c.original_id==document_id)).first():fail('ALREADY_REVERSED','该单据已冲正')
     from .operations import returns
     if c.execute(select(returns.c.id).where(returns.c.original_id==document_id,returns.c.tenant_id==actor['tenant_id'])).first():fail('HAS_RETURNS','原单已关联退货，不能再按原单全额冲正')

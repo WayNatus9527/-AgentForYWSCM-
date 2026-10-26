@@ -62,14 +62,21 @@ class Warehouse(Strict):
         except ZoneInfoNotFoundError:raise ValueError('时区须为有效IANA时区')
         return self
 
-def create_app(engine=None):
+def create_app(engine=None,*,review_worker_enabled=None,review_poll_seconds=2):
     engine = engine or db.make_engine()
     @asynccontextmanager
     async def lifespan(app):
         from .migrations import migrate
+        from .config import settings_for
+        from .review_worker import Supervisor
+        import asyncio
         migrate(engine)
-        yield
-    app = FastAPI(title='跨境电商供应链管理Agent助手',version='0.7.0',lifespan=lifespan)
+        enabled=review_worker_enabled if review_worker_enabled is not None else settings_for(engine).runtime_mode not in ('test','simulation')
+        app.state.review_supervisor=Supervisor(engine,interval=review_poll_seconds).start() if enabled else None
+        try:yield
+        finally:
+            if app.state.review_supervisor:await asyncio.to_thread(app.state.review_supervisor.stop)
+    app = FastAPI(title='跨境电商供应链管理Agent助手',version='0.10.1',lifespan=lifespan)
     app.state.engine = engine
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=['127.0.0.1','localhost','testserver'])
     attempts = defaultdict(deque)
@@ -169,7 +176,7 @@ def create_app(engine=None):
         with engine.connect() as c:
             ws=select(db.warehouses).where(db.warehouses.c.tenant_id==actor['tenant_id'])
             if actor['role']!='admin':ws=ws.where(db.warehouses.c.id.in_(actor['warehouse_ids']))
-            return {'tenant':c.execute(select(db.tenants.c.name).where(db.tenants.c.id==actor['tenant_id'])).scalar_one(),
+            return {'tenant_id':actor['tenant_id'],'tenant':c.execute(select(db.tenants.c.name).where(db.tenants.c.id==actor['tenant_id'])).scalar_one(),
                     'warehouses':[dict(x) for x in c.execute(ws).mappings()],
                     'skus':[dict(x) for x in c.execute(select(db.skus).where(db.skus.c.tenant_id==actor['tenant_id']).order_by(db.skus.c.code)).mappings()],
                     'connectors':[{'name':'跨境销售渠道','status':'not_configured'},{'name':'第三方海外仓','status':'not_configured'}]}
@@ -247,7 +254,7 @@ def create_app(engine=None):
             writer.writerow([safe(x) for x in [p['code'],p['name'],p['spec'],whs[r['warehouse_id']]['name'],r['g'],r['q'],r['d'],r['r'],r['t'],r['h'],r['b'],r['available'],r['offline_available'],r['updated_at']]])
         return Response('\ufeff'+out.getvalue(),media_type='text/csv; charset=utf-8',headers={'Content-Disposition':'attachment; filename="inventory.csv"'})
     @app.get('/health')
-    def health():return {'status':'ok','version':'0.7.0','environment':'simulation-development','stage':'M3'}
+    def health():return {'status':'ok','version':'0.10.1','environment':'simulation-development','stage':'M6'}
     from .phase2 import install
     install(app,engine,actor_for,scope)
     from .phase3 import install as install_phase3
@@ -261,6 +268,12 @@ def create_app(engine=None):
     install_v2(app,engine,actor_for)
     from .m3_api import install as install_m3
     install_m3(app,engine,actor_for)
+    from .m4_api import install as install_m4
+    install_m4(app,engine,actor_for)
+    from .m5_api import install as install_m5
+    install_m5(app,engine,actor_for)
+    from .m6_api import install as install_m6
+    install_m6(app,engine,actor_for)
     static=Path(__file__).parent/'static'
     app.mount('/static',StaticFiles(directory=static),name='static')
     @app.get('/')

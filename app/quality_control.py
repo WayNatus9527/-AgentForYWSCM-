@@ -34,7 +34,8 @@ def protected(c,tenant,warehouse,sku):
     for row in rows:
         if row['status']=='started' and not row['return_id']:q+=row['quantity']
         if row['status']=='completed':q+=row['good']-row['restocked'];d+=row['bad']-row['disposed']
-    return q,d
+    from .supply import quality_hold as supply_hold
+    return q+supply_hold(c,tenant,warehouse,sku),d
 
 
 def get(c,actor,identity,table=sessions):
@@ -86,26 +87,41 @@ def start(engine,actor,body,key):
             if not ret or ret['kind']!='customer' or ret['warehouse_id']!=body['warehouse_id'] or ret['sku_id']!=body['sku_id']:
                 fail('NOT_FOUND','退货单不存在或与当前范围不一致',404)
     def apply(c):
-        old=c.execute(select(sessions).where(sessions.c.tenant_id==actor['tenant_id'],sessions.c.reference==body['reference'])).mappings().first()
-        if old:
-            if any(old[k]!=body.get(k) for k in ('warehouse_id','sku_id','return_id','quantity','details')):fail('VOUCHER_CONFLICT','检验批次凭证已用于其他内容')
-            return {**dict(old),'business_replayed':True}
-        assert_unlocked(c,actor,body['warehouse_id'],body['sku_id'])
-        stock=inv.load_balance(c,actor,body['warehouse_id'],body['sku_id'])
-        if stock['version']!=body['expected_balance_version']:fail('VERSION_CONFLICT','库存已变化')
-        from .operations import returns,quality_hold
-        if body.get('return_id'):
-            ret=c.execute(select(returns).where(returns.c.id==body['return_id'])).mappings().one()
-            reserved=c.scalar(select(func.coalesce(func.sum(sessions.c.quantity),0)).where(sessions.c.return_id==ret['id'],sessions.c.status=='started'))
-            available=ret['quantity']-ret['good']-ret['bad']-reserved
-        else:
-            held,_=protected(c,actor['tenant_id'],body['warehouse_id'],body['sku_id'])
-            available=stock['q']-quality_hold(c,actor['tenant_id'],body['warehouse_id'],body['sku_id'])-held
-        if body['quantity']>available:fail('QUALITY_RESERVED','检验数量超过本批可用待验量')
-        row={k:body.get(k) for k in ('warehouse_id','sku_id','return_id','reference','quantity','details')}
-        row.update(id=uid(),tenant_id=actor['tenant_id'],good=0,bad=0,restocked=0,disposed=0,status='started',version=1,actor_id=actor['id'],document_id=None,created_at=now())
-        c.execute(insert(sessions).values(**row));log(c,actor,row,'started',body,lifecycle='started');return row
+        return start_in_transaction(c,actor,body)
     return command(engine,actor,'inspection.start',body,key,apply,authorize)
+
+
+def start_in_transaction(c,actor,body,*,receipt=None):
+    old=c.execute(select(sessions).where(sessions.c.tenant_id==actor['tenant_id'],sessions.c.reference==body['reference'])).mappings().first()
+    if old:
+        if any(old[k]!=body.get(k) for k in ('warehouse_id','sku_id','return_id','quantity','details')):fail('VOUCHER_CONFLICT','检验批次凭证已用于其他内容')
+        if receipt:
+            from .m5_schema import inspections
+            if c.scalar(select(inspections.c.receipt_id).where(inspections.c.session_id==old['id']))!=receipt['id']:
+                fail('VOUCHER_CONFLICT','检验凭证已关联其他到货来源')
+        return {**dict(old),'business_replayed':True}
+    assert_unlocked(c,actor,body['warehouse_id'],body['sku_id'])
+    stock=inv.load_balance(c,actor,body['warehouse_id'],body['sku_id'])
+    if stock['version']!=body['expected_balance_version']:fail('VERSION_CONFLICT','库存已变化')
+    from .operations import returns,quality_hold
+    if receipt:
+        from .supply import pending_inspection
+        available=pending_inspection(c,receipt)
+    elif body.get('return_id'):
+        ret=c.execute(select(returns).where(returns.c.id==body['return_id'])).mappings().one()
+        reserved=c.scalar(select(func.coalesce(func.sum(sessions.c.quantity),0)).where(sessions.c.return_id==ret['id'],sessions.c.status=='started'))
+        available=ret['quantity']-ret['good']-ret['bad']-reserved
+    else:
+        held,_=protected(c,actor['tenant_id'],body['warehouse_id'],body['sku_id'])
+        available=stock['q']-quality_hold(c,actor['tenant_id'],body['warehouse_id'],body['sku_id'])-held
+    if body['quantity']>available:fail('QUALITY_RESERVED','检验数量超过本批可用待验量')
+    row={k:body.get(k) for k in ('warehouse_id','sku_id','return_id','reference','quantity','details')}
+    row.update(id=uid(),tenant_id=actor['tenant_id'],good=0,bad=0,restocked=0,disposed=0,status='started',version=1,actor_id=actor['id'],document_id=None,created_at=now())
+    c.execute(insert(sessions).values(**row))
+    if receipt:
+        from .m5_schema import inspections
+        c.execute(insert(inspections).values(id=uid(),tenant_id=actor['tenant_id'],receipt_id=receipt['id'],session_id=row['id'],quantity=row['quantity'],created_at=now()))
+    log(c,actor,row,'started',{**body,**({'supply_receipt_id':receipt['id']} if receipt else {})},lifecycle='started');return row
 
 
 def act(engine,actor,identity,action,body,key):

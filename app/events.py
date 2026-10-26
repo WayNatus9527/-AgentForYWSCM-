@@ -6,7 +6,7 @@ import uuid
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from sqlalchemy import Table, Column, String, Integer, JSON, UniqueConstraint, CheckConstraint, insert, select
 from . import db
-from .clock import parse_timestamp, utc_now
+from .clock import parse_timestamp, utc_now, business_now
 from .config import settings_for
 from contextvars import ContextVar
 
@@ -106,7 +106,7 @@ def record_event(c, actor, *, event_type, object_type, object_id, lifecycle='reg
         _error('INVALID_EVENT_TIME', 'Invalid source timezone')
     occurred = _timestamp(occurred_at, 'occurred_at')
     planned = _timestamp(planned_at, 'planned_at')
-    registered = _timestamp(registered_at or utc_now(), 'registered_at', required=True)
+    registered = _timestamp(registered_at or business_now(c.engine), 'registered_at', required=True)
     received = _timestamp(received_at or registered, 'received_at', required=True)
     quality = time_quality or ('reported' if occurred else 'unknown')
     if quality not in QUALITIES or (occurred is None and quality != 'unknown'):
@@ -191,7 +191,7 @@ def register_stock_event(c, actor, row, doc_id, kind, source, delta, timestamp, 
     if not quantity:
         quantity = max((abs(v) for v in delta.values()), default=0)
     return record_event(c, actor, event_type='inventory.posted', object_type='stock_document', object_id=doc_id,
-        lifecycle='registered', occurred_at=occurred_at, received_at=timestamp, registered_at=timestamp,
+        lifecycle='registered', occurred_at=occurred_at, received_at=business_now(c.engine), registered_at=business_now(c.engine),
         source_system='local_inventory', source_event_id=doc_id, source_account=source_account,
         quantity=quantity, unit=unit,
         warehouse_id=row['warehouse_id'], sku_id=row['sku_id'],

@@ -101,14 +101,14 @@ class Worker:
         line, self.output = self.output.split(b'\n', 1)
         return json.loads(line)
 
-    def call(self, operation, **payload):
+    def call(self, operation, *, timeout=30, **payload):
         envelope = dict(operation=operation, run_id=self.manifest['run_id'],
                         fingerprint=self.manifest['database_fingerprint'], **payload)
         try:
             self.process.stdin.write((canonical(envelope)+'\n').encode()); self.process.stdin.flush()
         except (BrokenPipeError, OSError):
             raise WorkerLost('Worker connection closed') from None
-        return self.receive(.2 if payload.get('fault')=='timeout_after_success' else 30)
+        return self.receive(.2 if payload.get('fault')=='timeout_after_success' else timeout)
 
     def close(self):
         if self.process:

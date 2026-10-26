@@ -28,7 +28,7 @@ def migrate(engine):
     with db.write(engine, '__schema_migration__') as c:
         versions.create(c, checkfirst=True)
         applied = set(c.execute(select(versions.c.version)).scalars())
-        if applied - {1, 2, 3, 4, 5, 6}:
+        if applied - {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}:
             raise RuntimeError('Database schema is newer than this application')
         # Versions 1-4 remain exactly the existing additive table migrations.
         for version, name, tables in [(1,'phase_one_baseline',BASE),(2,'imports_purchases_approvals',PHASE2),(3,'transfers_returns_trial',PHASE3),(4,'agent_confirmed_actions',PHASE4)]:
@@ -51,4 +51,29 @@ def migrate(engine):
                     db.metadata.tables[table].create(c, checkfirst=True)
             append_only(c, ('stock_count_observations', 'stock_count_history', 'exception_task_history', 'quality_action_history'))
             c.execute(insert(versions).values(version=6, name='m3_counts_quality_exceptions'))
+        if 7 not in applied:
+            from . import m4_schema
+            from .m3_common import append_only
+            for table in m4_schema.TABLES:
+                table.create(c, checkfirst=True)
+            append_only(c, m4_schema.APPEND_ONLY)
+            c.execute(insert(versions).values(version=7, name='m4_fulfillment_connectors_reconciliation'))
+        if 8 not in applied:
+            from . import m5_schema
+            from .m3_common import append_only
+            for table in m5_schema.TABLES:
+                table.create(c, checkfirst=True)
+            append_only(c, m5_schema.APPEND_ONLY)
+            c.execute(insert(versions).values(version=8, name='m5_purchasing_supply_planning'))
+        if 9 not in applied:
+            from . import m6_schema
+            from .m3_common import append_only
+            for table in m6_schema.TABLES:table.create(c,checkfirst=True)
+            m6_schema.performance_indexes(c)
+            append_only(c,m6_schema.APPEND_ONLY)
+            c.execute(insert(versions).values(version=9,name='m6_process_review_controlled_tools'))
+        if 10 not in applied:
+            from . import review_queue_schema
+            review_queue_schema.migrate(c)
+            c.execute(insert(versions).values(version=10,name='m6_analysis_queue_recovery'))
         bind_runtime(engine, role='migration', connection=c)
